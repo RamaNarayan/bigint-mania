@@ -2,7 +2,7 @@ package rxl174430;
 
 public class Num  implements Comparable<Num> {
 
-    static long defaultBase = 10;  // Change as needed
+    static long defaultBase = 100;  // Change as needed
     long base = defaultBase;  // Change as needed
     long[] arr;  // array to store arbitrarily large integers
     boolean isNegative;  // boolean flag to represent negative numbers
@@ -72,8 +72,9 @@ public class Num  implements Comparable<Num> {
     // For example, if base=100, and the number stored corresponds to 10965,
     // then the output is "100: 65 9 1"
     public void printList() {
+    	System.out.print(base()+": ");
     	for(int i = 0;i<arr.length;i++) {
-    		System.out.print(arr[i]);
+    		System.out.print(arr[i] + " ");
     	}
     }
     
@@ -110,7 +111,8 @@ public class Num  implements Comparable<Num> {
 
 
     public static void main(String[] args) {
-	Num x = new Num(290);
+    	long num = 10965;
+	Num x = new Num(num);
 	x.printList();
 	//Num y = new Num("8");
 	//Num z = Num.add(x, y);
