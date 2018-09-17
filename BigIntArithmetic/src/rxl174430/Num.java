@@ -2,7 +2,7 @@ package rxl174430;
 
 public class Num implements Comparable<Num> {
 
-	static long defaultBase = 100000; // Change as needed
+	static long defaultBase = 10; // Change as needed
 	long base = defaultBase; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
@@ -14,6 +14,12 @@ public class Num implements Comparable<Num> {
 		System.out.println(arrLength + " " + arr.length);
 
 		recursive(s, 0);
+	}
+	
+	private Num(long[] arr,int size,boolean isNegative) {
+		this.arr = arr;
+		this.len = size;
+		this.isNegative = isNegative;
 	}
 
 	public void recursive(String quotient, int index) {
@@ -47,7 +53,9 @@ public class Num implements Comparable<Num> {
 	}
 
 	public Num(long x) {
+		this.isNegative = x < 0 ? true : false;
 		int i = 0;
+		x = Math.abs(x); //will fail in Long.MIN_VALUE. We should convert the value to a different base to workaround
 		long temp = x;
 		while (temp > 0) {
 			temp = temp / base;
@@ -61,49 +69,64 @@ public class Num implements Comparable<Num> {
 			x = x / base;
 			i = i + 1;
 		}
-		System.out.println(len);
 	}
 
-	public static Num add(Num a, Num b) {
-
-		long length_a = a.arr.length;
-		long length_b = b.arr.length;
-		long carry = 0;
-		long[] sum = new long[(int) (length_a < length_b ? length_b : length_a) + 1];
-		long i;
-		for (i = 0; (i != length_a) && (i != length_b); i++) {
-
-			sum[(int) i] = (a.arr[(int) i] + b.arr[(int) i] + carry) % defaultBase;
-
-			carry = (a.arr[(int) i] + b.arr[(int) i] + carry) / defaultBase;
-
-		}
-
-		while (i < length_a) {
-			sum[(int) i] = (a.arr[(int) i] + carry) % defaultBase;
-			carry = (a.arr[(int) i] + carry) / defaultBase;
-			i++;
-		}
-
-		while (i < length_b) {
-			sum[(int) i] = (b.arr[(int) i] + carry) % defaultBase;
-			carry = (b.arr[(int) i] + carry) / defaultBase;
-			i++;
-		}
-		System.out.println(i + " " + carry + " " + sum.length);
-		if (carry != 0) {
-			sum[(int) i] = carry % defaultBase;
-		}
-		for (i = sum.length - 1; i >= 0; i--) {
-			if ((carry == 0) && (i == (sum.length - 1))) {
-				continue;
+	
+	public static Num add(Num a,Num b) {
+		boolean isNegative;
+		if(a.isNegative&&b.isNegative || !a.isNegative&&!b.isNegative) {
+			if(a.isNegative&&b.isNegative) {
+				isNegative = true;
 			}
-			System.out.print(sum[(int) i] + " ");
+			else {
+				isNegative = false;
+			}
+			long[] firstNumber = a.arr;
+			long[] secondNumber = b.arr;
+			int sizeOfNumA = a.len;
+			int sizeOfNumB = b.len;		
+			int sizeOfSum = (sizeOfNumA > sizeOfNumB ? sizeOfNumA : sizeOfNumB) + 1;
+			long[] sum = new long[sizeOfSum];
+			long carry = 0;
+			int i = 0;
+			int j = 0;
+			int k = 0;
+			while(i < sizeOfNumA && j < sizeOfNumB) {
+				sum[k] = (firstNumber[i] + secondNumber[j] + carry)%defaultBase;
+				carry = (firstNumber[i] + secondNumber[j] + carry)/defaultBase;
+				i++;
+				j++;
+				k++;
+			}
+			if(i<sizeOfNumA) {
+				while(i<sizeOfNumA) {
+					sum[k] = (firstNumber[i] + carry)%defaultBase;
+					carry = (firstNumber[i]  + carry)/defaultBase;
+					i++;
+					k++;
+				}			
+			}
+			else if(j<sizeOfNumB) {
+				while(j<sizeOfNumB) {
+					sum[k] = (secondNumber[j] + carry)%defaultBase;
+					carry = (secondNumber[j]  + carry)/defaultBase;
+					j++;
+					k++;
+				}			
+			}
+			if(carry!=0) {
+				sum[k] = carry;
+				System.out.println("carry"+carry+k);
+			}
+			else {
+				k--;
+			}
+			return new Num(sum,k+1,isNegative);
 		}
-
-		System.out.println("hello4");
-
-		return null;
+		else {
+			return subtract(a,b);
+		}
+		
 	}
 
 	public static Num subtract(Num a, Num b) {
@@ -111,7 +134,50 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static Num product(Num a, Num b) {
-		return null;
+		boolean isNegative;
+		int sizeOfNumA = a.len;
+		int sizeOfNumB = b.len;
+		int compare = a.compareTo(b);
+		long[] firstNumber;
+		long[] secondNumber;
+		if(compare==-1) {
+			firstNumber = b.arr;
+			secondNumber = a.arr;
+		}
+		else {
+			firstNumber = a.arr;
+			secondNumber = b.arr;
+		}
+		int sizeOfProduct = sizeOfNumA + sizeOfNumB;
+		long[] product = new long[sizeOfProduct];
+		long carry = 0;
+		int i;
+		int j;
+		int k = 0;
+		for(i = 0;i<sizeOfNumB;i++) {
+			carry = 0;
+			for(j = 0;j<sizeOfNumA;j++) {
+				k = i + j;
+				long prod = product[k] + (secondNumber[i] * firstNumber[j]) + carry;
+				product[k] = prod % defaultBase; 
+				carry = prod /defaultBase;
+			}
+			if(carry!=0) {				
+				product[k+1] = product[k+1]+carry;
+			}
+		}
+		if(carry!=0) {
+			k++;
+			product[k] = carry;
+		}
+		
+		if((a.isNegative&&b.isNegative) || (!a.isNegative&&!b.isNegative)){
+			isNegative = false;
+		}
+		else {
+			isNegative = true;
+		}
+		return new Num(product,k+1,isNegative);
 	}
 
 	// Use divide and conquer
@@ -144,7 +210,34 @@ public class Num implements Comparable<Num> {
 	// otherwise
 	@Override
 	public int compareTo(Num other) {
-		return 0;
+		if((this.isNegative && other.isNegative) || (!this.isNegative && !other.isNegative)) {
+			if(this.len>other.len)
+				return 1;
+			else if(this.len==other.len) {
+				int i = this.len-1;
+				int isEqual = 0;
+				while(i>=0) {
+					if(this.arr[i]<other.arr[i]) {
+						isEqual = -1;
+						break;
+					}
+					else if(this.arr[i]>other.arr[i]) {
+						isEqual = 1;
+						break;
+					}
+					i--;
+				}
+				return isEqual;
+			}
+			else
+				return -1;
+		}
+		else if(this.isNegative) {
+			return -1;
+		}
+		else {
+			return 1;
+		}
 	}
 
 	// Output using the format "base: elements of list ..."
@@ -152,9 +245,10 @@ public class Num implements Comparable<Num> {
 	// then the output is "100: 65 9 1"
 	public void printList() {
 		System.out.print(base() + ": ");
-		for (int i = 0; i < arr.length; i++) {
+		for (int i = 0; i < len; i++) {
 			System.out.print(arr[i] + " ");
 		}
+		System.out.println(isNegative ? "-" : "");
 	}
 
 	// Return number to a string in base 10
@@ -169,6 +263,7 @@ public class Num implements Comparable<Num> {
 
 	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
+		long[] arr = this.arr;
 		return null;
 	}
 
@@ -192,16 +287,16 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) {
-		// long num = 10965;
-		// Num x = new Num(num);
-		Num y = new Num(99999);
-		Num x = new Num(99999);
-		// x.printList();
-		// Num y = new Num("8");
-		Num.add(x, y);
-		// System.out.println(z);
-		// Num a = Num.power(x, 8);
-		// System.out.println(a);
-		// if(z != null) z.printList();
+		long num = Long.MAX_VALUE;
+		Num a = new Num(num);
+		Num b = new Num(num);
+		Num x = new Num(2);
+		Num y = new Num(2);
+		Num sum = Num.add(a, b);		
+		Num product = Num.product(x, y);
+		sum.printList();
+		System.out.println();
+		product.printList();
+		System.out.println();
 	}
 }
