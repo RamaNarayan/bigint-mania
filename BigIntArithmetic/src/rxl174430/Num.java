@@ -11,7 +11,7 @@ import java.util.Arrays;
  	public Num(String s) {// assuming only positive number for now.
 		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(defaultBase)));
 		arr = new long[(int) arrLength];
-		System.out.println(arrLength + " " + arr.length);
+		//System.out.println(arrLength + " " + arr.length);
  		recursive(s, 0);
 	}
  	private Num(long[] arr, int size, boolean isNegative) {
@@ -20,9 +20,11 @@ import java.util.Arrays;
 		this.isNegative = isNegative;
 	}
  	public void recursive(String quotient, int index) {
-		if (Long.parseLong(quotient) == 0) {
+ 		if(quotient.length() == 1 ) {
+			if (Long.parseLong(quotient) == 0) {
 			len = index;
-			return;
+			return ;
+			}
 		}
 		long[] arrTemp;
 		long arrLength = 18 - Long.toString(defaultBase).length();
@@ -30,24 +32,30 @@ import java.util.Arrays;
 		String temp;
 		long remainder = 0;
 		String quotientString = "";
-		System.out.println(arrLength + " " + arrTemp.length);
+		//System.out.println(arrLength + " " + arrTemp.length);
 		for (long i = 0; i < arrTemp.length; i = i + 1) {
-			System.out.println("i-" + i);
+			//System.out.println("i-" + i);
 			if (remainder != 0) {
 				temp = Long.toString(remainder)
-						.concat(quotient.substring((int) (i * arrLength),
-								(int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength
-										: quotient.length())));
+						.concat(quotient.substring((int) (i * arrLength), (int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength : quotient.length())));
 				arrTemp[(int) i] = Long.valueOf(temp);
 			} else {
-				arrTemp[(int) i] = Long.valueOf(quotient.substring((int) (i * arrLength),
-						(int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength
-								: quotient.length())));
+				arrTemp[(int) i] = Long.valueOf(quotient.substring((int) (i * arrLength), (int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength : quotient.length())));
+				//if remainder becomes zero mid division, we need to add zeros to quotient
+				
 			}
- 			remainder = arrTemp[(int) i] % defaultBase;
-			quotientString = quotientString.concat(Long.toString((arrTemp[(int) i] / defaultBase)));
- 		}
-		System.out.println("quotient string-" + quotientString);
+			//System.out.print(arrTemp[(int) i]+"-->"+arrTemp[(int) i] / defaultBase);
+			if(remainder == 0 && i != 0) {
+				for(int z = 0; z < Long.toString(arrTemp[(int)i]).length()-1; z++) {
+					quotientString = quotientString.concat("0");
+				}
+			}
+			remainder = arrTemp[(int) i] % defaultBase;
+			//System.out.println("-->"+remainder);
+			quotientString = quotientString.concat(Long.toString(arrTemp[(int) i] / defaultBase));
+
+		}
+		//System.out.println("quotient string-" + quotientString);
 		arr[index] = remainder;
 		recursive(quotientString, index + 1);
 	}
