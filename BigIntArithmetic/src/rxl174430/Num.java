@@ -1,16 +1,18 @@
-package rxl174430;
+
+
+import java.lang.Math;
 
 public class Num implements Comparable<Num> {
 
-	static long defaultBase = 10; // Change as needed
+	static long defaultBase = 15; // Change as needed
 	long base = defaultBase; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
 	int len; // actual number of elements of array that are used; number is stored in arr[0..len-1]
 
-	public Num(String s) {
-		long arrLength = 18 - Long.toString(defaultBase).length();
-		arr = new long[(int) ((s.length() / arrLength) + ((s.length() % arrLength) == 0 ? 0 : 1))];
+	public Num(String s) {//assuming only positive number for now.
+		long arrLength = (long) Math.ceil(s.length() * (Math.log(10)/Math.log(defaultBase)));
+		arr = new long[(int) arrLength];
 		System.out.println(arrLength + " " + arr.length);
 
 		recursive(s, 0);
@@ -23,8 +25,9 @@ public class Num implements Comparable<Num> {
 	}
 
 	public void recursive(String quotient, int index) {
-		if (quotient.length() == 0) {
-			return;
+		if (Long.parseLong(quotient) == 0) {
+			len = index;
+			return ;
 		}
 		long[] arrTemp;
 		long arrLength = 18 - Long.toString(defaultBase).length();
@@ -40,7 +43,7 @@ public class Num implements Comparable<Num> {
 						.concat(quotient.substring((int) (i * arrLength), (int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength : quotient.length())));
 				arrTemp[(int) i] = Long.valueOf(temp);
 			} else {
-				arrTemp[(int) i] = Long.valueOf(quotient.substring((int) i, (int) i + (int) arrLength));
+				arrTemp[(int) i] = Long.valueOf(quotient.substring((int) (i * arrLength), (int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength : quotient.length())));
 			}
 
 			remainder = arrTemp[(int) i] % defaultBase;
@@ -245,7 +248,7 @@ public class Num implements Comparable<Num> {
 	// then the output is "100: 65 9 1"
 	public void printList() {
 		System.out.print(base() + ": ");
-		for (int i = 0; i < len; i++) {
+		for (int i = len-1; i >=0; i--) { // MOST TO LEAST FOR TESTING
 			System.out.print(arr[i] + " ");
 		}
 		System.out.println(isNegative ? "-" : "");
@@ -287,17 +290,18 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) {
-		long num = Long.MAX_VALUE;
-		Num a = new Num(num);
-		Num b = new Num(num);
-		Num x = new Num(10);
-		Num y = new Num(10);
-		Num sum = Num.add(a, b);		
-		Num product = Num.product(x, y);
-		sum.printList();
-		System.out.println();
-		product.printList();
-		System.out.println();
+		Num a = new Num("98765432123456789");
+//		long num = Long.MAX_VALUE;
+//		Num a = new Num(num);
+//		Num b = new Num(num);
+//		Num x = new Num(10);
+//		Num y = new Num(10);
+//		Num sum = Num.add(a, b);		
+//		Num product = Num.product(x, y);
+		a.printList(); 
+//		System.out.println();
+//		product.printList();
+//		System.out.println();
 		
 	}
 }
