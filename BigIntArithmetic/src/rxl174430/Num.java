@@ -1,24 +1,26 @@
-
+package rxl174430;
 
 import java.lang.Math;
+import java.util.Arrays;
 
 public class Num implements Comparable<Num> {
 
-	static long defaultBase = 15; // Change as needed
+	static long defaultBase = 10; // Change as needed
 	long base = defaultBase; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
-	int len; // actual number of elements of array that are used; number is stored in arr[0..len-1]
+	int len; // actual number of elements of array that are used; number is stored in
+				// arr[0..len-1]
 
-	public Num(String s) {//assuming only positive number for now.
-		long arrLength = (long) Math.ceil(s.length() * (Math.log(10)/Math.log(defaultBase)));
+	public Num(String s) {// assuming only positive number for now.
+		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(defaultBase)));
 		arr = new long[(int) arrLength];
 		System.out.println(arrLength + " " + arr.length);
 
 		recursive(s, 0);
 	}
-	
-	private Num(long[] arr,int size,boolean isNegative) {
+
+	private Num(long[] arr, int size, boolean isNegative) {
 		this.arr = arr;
 		this.len = size;
 		this.isNegative = isNegative;
@@ -27,7 +29,7 @@ public class Num implements Comparable<Num> {
 	public void recursive(String quotient, int index) {
 		if (Long.parseLong(quotient) == 0) {
 			len = index;
-			return ;
+			return;
 		}
 		long[] arrTemp;
 		long arrLength = 18 - Long.toString(defaultBase).length();
@@ -40,10 +42,14 @@ public class Num implements Comparable<Num> {
 			System.out.println("i-" + i);
 			if (remainder != 0) {
 				temp = Long.toString(remainder)
-						.concat(quotient.substring((int) (i * arrLength), (int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength : quotient.length())));
+						.concat(quotient.substring((int) (i * arrLength),
+								(int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength
+										: quotient.length())));
 				arrTemp[(int) i] = Long.valueOf(temp);
 			} else {
-				arrTemp[(int) i] = Long.valueOf(quotient.substring((int) (i * arrLength), (int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength : quotient.length())));
+				arrTemp[(int) i] = Long.valueOf(quotient.substring((int) (i * arrLength),
+						(int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength
+								: quotient.length())));
 			}
 
 			remainder = arrTemp[(int) i] % defaultBase;
@@ -58,7 +64,8 @@ public class Num implements Comparable<Num> {
 	public Num(long x) {
 		this.isNegative = x < 0 ? true : false;
 		int i = 0;
-		x = Math.abs(x); //will fail in Long.MIN_VALUE. We should convert the value to a different base to workaround
+		x = Math.abs(x); // will fail in Long.MIN_VALUE. We should convert the value to a different base
+							// to workaround
 		long temp = x;
 		while (temp > 0) {
 			temp = temp / base;
@@ -74,66 +81,171 @@ public class Num implements Comparable<Num> {
 		}
 	}
 
-	
-	public static Num add(Num a,Num b) {
+	public static Num add(Num a, Num b) {
 		boolean isNegative;
-		if(a.isNegative&&b.isNegative || !a.isNegative&&!b.isNegative) {
-			if(a.isNegative&&b.isNegative) {
+		if (a.isNegative && b.isNegative || !a.isNegative && !b.isNegative) {
+			if (a.isNegative && b.isNegative) {
 				isNegative = true;
-			}
-			else {
+			} else {
 				isNegative = false;
 			}
 			long[] firstNumber = a.arr;
 			long[] secondNumber = b.arr;
 			int sizeOfNumA = a.len;
-			int sizeOfNumB = b.len;		
+			int sizeOfNumB = b.len;
 			int sizeOfSum = (sizeOfNumA > sizeOfNumB ? sizeOfNumA : sizeOfNumB) + 1;
 			long[] sum = new long[sizeOfSum];
 			long carry = 0;
 			int i = 0;
 			int j = 0;
 			int k = 0;
-			while(i < sizeOfNumA && j < sizeOfNumB) {
-				sum[k] = (firstNumber[i] + secondNumber[j] + carry)%defaultBase;
-				carry = (firstNumber[i] + secondNumber[j] + carry)/defaultBase;
+			while (i < sizeOfNumA && j < sizeOfNumB) {
+				sum[k] = (firstNumber[i] + secondNumber[j] + carry) % defaultBase;
+				carry = (firstNumber[i] + secondNumber[j] + carry) / defaultBase;
 				i++;
 				j++;
 				k++;
 			}
-			if(i<sizeOfNumA) {
-				while(i<sizeOfNumA) {
-					sum[k] = (firstNumber[i] + carry)%defaultBase;
-					carry = (firstNumber[i]  + carry)/defaultBase;
+			if (i < sizeOfNumA) {
+				while (i < sizeOfNumA) {
+					sum[k] = (firstNumber[i] + carry) % defaultBase;
+					carry = (firstNumber[i] + carry) / defaultBase;
 					i++;
 					k++;
-				}			
-			}
-			else if(j<sizeOfNumB) {
-				while(j<sizeOfNumB) {
-					sum[k] = (secondNumber[j] + carry)%defaultBase;
-					carry = (secondNumber[j]  + carry)/defaultBase;
+				}
+			} else if (j < sizeOfNumB) {
+				while (j < sizeOfNumB) {
+					sum[k] = (secondNumber[j] + carry) % defaultBase;
+					carry = (secondNumber[j] + carry) / defaultBase;
 					j++;
 					k++;
-				}			
+				}
 			}
-			if(carry!=0) {
+			if (carry != 0) {
 				sum[k] = carry;
-				System.out.println("carry"+carry+k);
-			}
-			else {
+			} else {
 				k--;
 			}
-			return new Num(sum,k+1,isNegative);
+			return new Num(sum, k + 1, isNegative);
+		} else {
+			return subtract(a, negateNumber(b));
 		}
-		else {
-			return subtract(a,b);
-		}
-		
+
+	}
+
+	public static boolean isSignEqual(Num a, Num b) {
+		if ((a.isNegative && b.isNegative) || (!a.isNegative && !b.isNegative)) {
+			return true;
+		} else
+			return false;
+	}
+
+	public static Num negateNumber(Num a) {
+		Num negatedNum = new Num(a.arr, a.len, !a.isNegative);
+		return negatedNum;
 	}
 
 	public static Num subtract(Num a, Num b) {
-		return null;
+		
+		if(isSignEqual(a, b)) {
+			boolean isNegative;
+			int sizeOfNumA = a.len;
+			int sizeOfNumB = b.len;
+			int sizeOfDiff;
+			long[] firstNumber;
+			long[] secondNumber;
+			int firstNumberLength, secondNumberLength;
+			if (sizeOfNumA > sizeOfNumB) {
+				sizeOfDiff = sizeOfNumA;
+				firstNumber = Arrays.copyOf(a.arr,sizeOfNumA);
+				secondNumber = Arrays.copyOf(b.arr,sizeOfNumB);
+				firstNumberLength = sizeOfNumA;
+				secondNumberLength = sizeOfNumB;
+				isNegative = a.isNegative;
+			} else if(sizeOfNumA < sizeOfNumB){
+				sizeOfDiff = sizeOfNumB;
+				firstNumber = Arrays.copyOf(b.arr,sizeOfNumB);
+				secondNumber = Arrays.copyOf(a.arr,sizeOfNumA);
+				firstNumberLength = sizeOfNumB;
+				secondNumberLength = sizeOfNumA;
+				isNegative = b.isNegative;
+			}
+			else {
+				int x = sizeOfNumA-1;
+				int isEqual = 0;
+				while (x >= 0) {
+					if (a.arr[x] < b.arr[x]) {
+						isEqual = -1;
+						break;
+					} else if (a.arr[x] > b.arr[x]) {
+						isEqual = 1;
+						break;
+					}
+					x--;
+				}
+				if(isEqual == -1) {
+					sizeOfDiff = sizeOfNumB;
+					firstNumber = Arrays.copyOf(b.arr,sizeOfNumB);
+					secondNumber = Arrays.copyOf(a.arr,sizeOfNumA);
+					firstNumberLength = sizeOfNumB;
+					secondNumberLength = sizeOfNumA;
+					isNegative = b.isNegative;
+				}
+				else {
+					sizeOfDiff = sizeOfNumA;
+					firstNumber = Arrays.copyOf(a.arr,sizeOfNumA);
+					secondNumber = Arrays.copyOf(b.arr,sizeOfNumB);
+					firstNumberLength = sizeOfNumA;
+					secondNumberLength = sizeOfNumB;
+					isNegative = a.isNegative;
+				}
+				
+			}
+			if ((!a.isNegative && !b.isNegative) || (a.isNegative && b.isNegative)) {
+				int compare = a.compareTo(b);
+				if (compare == -1) {
+					isNegative = true;
+				} else {
+					isNegative = false;
+				}
+			}
+
+			long[] difference = new long[sizeOfDiff];
+			int i = 0;
+			int j = 0;
+			int k = 0;
+			while (i < firstNumberLength && j < secondNumberLength) {
+				if (firstNumber[i] >= secondNumber[j]) {
+					difference[k] = firstNumber[i] - secondNumber[j];
+				} else {
+
+					difference[k] = (firstNumber[i] + defaultBase) - secondNumber[j];
+					for (int borrowIndex = i + 1; borrowIndex < firstNumberLength; borrowIndex++) {
+						if (firstNumber[borrowIndex] != 0) {
+							firstNumber[borrowIndex] -= 1;
+							break;
+						} else {
+							firstNumber[borrowIndex] += (defaultBase - 1);
+						}
+					}
+				}
+				i++;
+				j++;
+				k++;
+
+			}
+			while (i < firstNumberLength) {
+				difference[k] = firstNumber[i];
+				i++;
+				k++;
+			}
+			return new Num(difference, k, isNegative);
+		}
+		else {
+			return add(a,negateNumber(b));
+		}
+		
+
 	}
 
 	public static Num product(Num a, Num b) {
@@ -143,11 +255,10 @@ public class Num implements Comparable<Num> {
 		int compare = a.compareTo(b);
 		long[] firstNumber;
 		long[] secondNumber;
-		if(compare==-1) {
+		if (compare == -1) {
 			firstNumber = b.arr;
 			secondNumber = a.arr;
-		}
-		else {
+		} else {
 			firstNumber = a.arr;
 			secondNumber = b.arr;
 		}
@@ -157,30 +268,29 @@ public class Num implements Comparable<Num> {
 		int i;
 		int j;
 		int k = 0;
-		for(i = 0;i<sizeOfNumB;i++) {
+		for (i = 0; i < sizeOfNumB; i++) {
 			carry = 0;
-			for(j = 0;j<sizeOfNumA;j++) {
+			for (j = 0; j < sizeOfNumA; j++) {
 				k = i + j;
 				long prod = product[k] + (secondNumber[i] * firstNumber[j]) + carry;
-				product[k] = prod % defaultBase; 
-				carry = prod /defaultBase;
+				product[k] = prod % defaultBase;
+				carry = prod / defaultBase;
 			}
-			if(carry!=0) {				
-				product[k+1] = product[k+1]+carry;
+			if (carry != 0) {
+				product[k + 1] = product[k + 1] + carry;
 			}
 		}
-		if(carry!=0) {
+		if (carry != 0) {
 			k++;
 			product[k] = carry;
 		}
-		
-		if((a.isNegative&&b.isNegative) || (!a.isNegative&&!b.isNegative)){
+
+		if ((a.isNegative && b.isNegative) || (!a.isNegative && !b.isNegative)) {
 			isNegative = false;
-		}
-		else {
+		} else {
 			isNegative = true;
 		}
-		return new Num(product,k+1,isNegative);
+		return new Num(product, k + 1, isNegative);
 	}
 
 	// Use divide and conquer
@@ -213,32 +323,28 @@ public class Num implements Comparable<Num> {
 	// otherwise
 	@Override
 	public int compareTo(Num other) {
-		if((this.isNegative && other.isNegative) || (!this.isNegative && !other.isNegative)) {
-			if(this.len>other.len)
+		if ((this.isNegative && other.isNegative) || (!this.isNegative && !other.isNegative)) {
+			if (this.len > other.len)
 				return (this.isNegative && other.isNegative) ? -1 : 1;
-			else if(this.len==other.len) {
-				int i = this.len-1;
+			else if (this.len == other.len) {
+				int i = this.len - 1;
 				int isEqual = 0;
-				while(i>=0) {
-					if(this.arr[i]<other.arr[i]) {
+				while (i >= 0) {
+					if (this.arr[i] < other.arr[i]) {
 						isEqual = (this.isNegative && other.isNegative) ? 1 : -1;
 						break;
-					}
-					else if(this.arr[i]>other.arr[i]) {
+					} else if (this.arr[i] > other.arr[i]) {
 						isEqual = (this.isNegative && other.isNegative) ? -1 : 1;
 						break;
 					}
 					i--;
 				}
 				return isEqual;
-			}
-			else
+			} else
 				return (this.isNegative && other.isNegative) ? 1 : -1;
-		}
-		else if(this.isNegative) {
+		} else if (this.isNegative) {
 			return -1;
-		}
-		else {
+		} else {
 			return 1;
 		}
 	}
@@ -248,7 +354,7 @@ public class Num implements Comparable<Num> {
 	// then the output is "100: 65 9 1"
 	public void printList() {
 		System.out.print(base() + ": ");
-		for (int i = len-1; i >=0; i--) { // MOST TO LEAST FOR TESTING
+		for (int i = 0; i < len; i++) {
 			System.out.print(arr[i] + " ");
 		}
 		System.out.println(isNegative ? "-" : "");
@@ -290,18 +396,21 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) {
-		Num a = new Num("98765432123456789");
-//		long num = Long.MAX_VALUE;
-//		Num a = new Num(num);
-//		Num b = new Num(num);
-//		Num x = new Num(10);
-//		Num y = new Num(10);
-//		Num sum = Num.add(a, b);		
-//		Num product = Num.product(x, y);
-		a.printList(); 
-//		System.out.println();
-//		product.printList();
-//		System.out.println();
+		long num = Long.MAX_VALUE;
+		Num a = new Num(-num);
+		Num b = new Num(num);
+		Num x = new Num(9000);
+		Num y = new Num(10);
+		 Num sum = Num.add(a, b);
+		 sum.printList();
+		// Num product = Num.product(x, y);
+		Num diff = Num.subtract(a, b);
+		System.out.println();
+		diff.printList();
+		// product.printList();
+		System.out.println();
 		
+		System.out.println();
+
 	}
 }
