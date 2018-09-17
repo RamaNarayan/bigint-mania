@@ -212,17 +212,17 @@ public class Num implements Comparable<Num> {
 	public int compareTo(Num other) {
 		if((this.isNegative && other.isNegative) || (!this.isNegative && !other.isNegative)) {
 			if(this.len>other.len)
-				return 1;
+				return (this.isNegative && other.isNegative) ? -1 : 1;
 			else if(this.len==other.len) {
 				int i = this.len-1;
 				int isEqual = 0;
 				while(i>=0) {
 					if(this.arr[i]<other.arr[i]) {
-						isEqual = -1;
+						isEqual = (this.isNegative && other.isNegative) ? 1 : -1;
 						break;
 					}
 					else if(this.arr[i]>other.arr[i]) {
-						isEqual = 1;
+						isEqual = (this.isNegative && other.isNegative) ? -1 : 1;
 						break;
 					}
 					i--;
@@ -230,7 +230,7 @@ public class Num implements Comparable<Num> {
 				return isEqual;
 			}
 			else
-				return -1;
+				return (this.isNegative && other.isNegative) ? 1 : -1;
 		}
 		else if(this.isNegative) {
 			return -1;
@@ -290,13 +290,14 @@ public class Num implements Comparable<Num> {
 		long num = Long.MAX_VALUE;
 		Num a = new Num(num);
 		Num b = new Num(num);
-		Num x = new Num(2);
-		Num y = new Num(2);
+		Num x = new Num(10);
+		Num y = new Num(10);
 		Num sum = Num.add(a, b);		
 		Num product = Num.product(x, y);
 		sum.printList();
 		System.out.println();
 		product.printList();
 		System.out.println();
+		
 	}
 }
