@@ -71,23 +71,30 @@ import java.util.Arrays;
  	public Num(long x) {
 		this.isNegative = x < 0 ? true : false;
 		int i = 0;
-		x = Math.abs(x); // will fail in Long.MIN_VALUE. We should convert the value to a different base
-							// to workaround
-		long temp = x;
-		while (temp > 0) {
-			temp = temp / base;
-			i = i + 1;
+		if (x == 0) {
+			len = 1;
+			arr = new long[len];
+			arr[len - 1] = x;
+		} else {
+			x = Math.abs(x); // will fail in Long.MIN_VALUE. We should convert the value to a different base to workaround
+			long temp = x;
+			while (temp > 0) {
+				temp = temp / base;
+				i = i + 1;
+			}
+			len = i;
+			arr = new long[len];
+			i = 0;
+			while (x > 0) {
+				arr[i] = x % base;
+				x = x / base;
+				i = i + 1;
+			}
 		}
-		len = i;
-		arr = new long[len];
-		i = 0;
-		while (x > 0) {
-			arr[i] = x % base;
-			x = x / base;
-			i = i + 1;
-		}
+
 	}
- 	public static Num add(Num a, Num b) {
+
+	public static Num add(Num a, Num b) {
 		boolean isNegative;
 		if (a.isNegative && b.isNegative || !a.isNegative && !b.isNegative) {
 			if (a.isNegative && b.isNegative) {
@@ -318,7 +325,23 @@ import java.util.Arrays;
 	}
  	// Use binary search to calculate a/b
 	public static Num divide(Num a, Num b) {
-		return null;
+		int compare = a.compareTo(b);
+		if (compare == -1) {
+			return new Num(0);
+		} else if (compare == 0) {
+			return new Num(1);
+		} else {
+			Num diff = subtract(a, b);
+			int count = 1;
+			while (!diff.isNegative) {
+				diff = subtract(diff, b);
+				if (!diff.isNegative) {
+					count++;
+				}
+			}
+			return new Num(count);
+
+		}
 	}
  	// return a%b
 	public static Num mod(Num a, Num b) {
