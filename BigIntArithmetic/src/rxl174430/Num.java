@@ -325,23 +325,30 @@ import java.util.Arrays;
 	}
  	// Use binary search to calculate a/b
 	public static Num divide(Num a, Num b) {
-		int compare = a.compareTo(b);
+		Num dividend = a.isNegative ? negateNumber(a) : a;
+		Num divisor = b.isNegative ? negateNumber(b) : b;
+		boolean isNegative = isSignEqual(a, b) ? false : true;
+		int compare = dividend.compareTo(divisor);
+		Num quotient;
 		if (compare == -1) {
-			return new Num(0);
+			quotient =  new Num(0);
 		} else if (compare == 0) {
-			return new Num(1);
+			quotient = new Num(1);
 		} else {
-			Num diff = subtract(a, b);
+			Num diff = subtract(dividend, divisor);
 			int count = 1;
 			while (!diff.isNegative) {
-				diff = subtract(diff, b);
+				diff = subtract(diff, divisor);
 				if (!diff.isNegative) {
 					count++;
 				}
 			}
-			return new Num(count);
-
+			if(isNegative)
+				quotient = negateNumber(new Num(count));
+			else
+				quotient = new Num(count);
 		}
+		return quotient;
 	}
  	// return a%b
 	public static Num mod(Num a, Num b) {
@@ -424,11 +431,12 @@ import java.util.Arrays;
 		long num = Long.MAX_VALUE;
 		Num a = new Num(16);
 		Num b = new Num(5);
-		Num x = new Num(9000);
-		Num y = new Num(8990);
+		Num x = new Num(-10);
+		Num y = new Num(5);
 		Num prod = Num.product(a, b);
 		Num diff = Num.subtract(x ,y);
-		diff.printList();
+		Num div = Num.divide(x, y);
+		div.printList();
 		//a.printList();
 		//b.printList();
 		Num sum = Num.add(a,b);
