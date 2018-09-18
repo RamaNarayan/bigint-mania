@@ -238,29 +238,35 @@ import java.util.Arrays;
  	}
  	public static Num product(Num a, Num b) {
 		boolean isNegative;
-		int sizeOfNumA = a.len;
-		int sizeOfNumB = b.len;
+		int sizeOfLargerNum = 0;
+		int sizeOfSmallerNum = 0;
 		int compare = a.compareTo(b);
 		long[] firstNumber;
 		long[] secondNumber;
 		if (compare == -1) {
 			firstNumber = b.arr;
+			sizeOfLargerNum = b.len;
 			secondNumber = a.arr;
+			sizeOfSmallerNum = a.len;
+			
 		} else {
 			firstNumber = a.arr;
+			sizeOfLargerNum = a.len;
 			secondNumber = b.arr;
+			sizeOfSmallerNum = b.len;
+			
 		}
-		int sizeOfProduct = sizeOfNumA + sizeOfNumB;
+		int sizeOfProduct = sizeOfLargerNum + sizeOfSmallerNum;
 		long[] product = new long[sizeOfProduct];
 		long carry = 0;
 		int i;
 		int j;
 		int k = 0;
-		for (i = 0; i < sizeOfNumB; i++) {
+		for (i = 0; i < sizeOfLargerNum; i++) {
 			carry = 0;
-			for (j = 0; j < sizeOfNumA; j++) {
+			for (j = 0; j < sizeOfSmallerNum; j++) {
 				k = i + j;
-				long prod = product[k] + (secondNumber[i] * firstNumber[j]) + carry;
+				long prod = product[k] + (firstNumber[i] * secondNumber[j]) + carry;
 				product[k] = prod % defaultBase;
 				carry = prod / defaultBase;
 			}
@@ -281,7 +287,7 @@ import java.util.Arrays;
 	}
  	// Use divide and conquer
 	public static Num power(Num a, long n) {
-		if (n == 1) {
+		if (n == 0) {
 			return new Num(1);
 		} else {
 			Num p = power(Num.product(a, a), n / 2);
@@ -371,19 +377,11 @@ import java.util.Arrays;
 	}
  	public static void main(String[] args) {
 		long num = Long.MAX_VALUE;
-		Num a = new Num(-num);
-		Num b = new Num(num);
+		Num a = new Num(1);
+		Num b = new Num(25);
 		Num x = new Num(9000);
 		Num y = new Num(10);
-		 Num sum = Num.add(a, b);
-		 sum.printList();
-		// Num product = Num.product(x, y);
-		Num diff = Num.subtract(a, b);
-		System.out.println();
-		diff.printList();
-		// product.printList();
-		System.out.println();
-		
-		System.out.println();
+		Num prod = Num.product(a, b);
+		prod.printList();
  	}
 }
