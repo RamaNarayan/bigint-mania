@@ -12,7 +12,16 @@ import java.util.Arrays;
 		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(defaultBase)));
 		arr = new long[(int) arrLength];
 		//System.out.println(arrLength + " " + arr.length);
- 		recursive(s, 0);
+		if(s.charAt(0) == '-') {
+			isNegative = true;
+			recursive(s.substring(1, s.length()), 0);
+		}
+		else if(s.charAt(0) == '+') {
+			isNegative = false;
+			recursive(s.substring(1, s.length()), 0);
+		}
+		else
+			recursive(s, 0);
 	}
  	private Num(long[] arr, int size, boolean isNegative) {
 		this.arr = arr;
