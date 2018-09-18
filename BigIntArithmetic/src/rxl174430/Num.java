@@ -325,6 +325,39 @@ import java.util.Arrays;
 	}
  	// Use binary search to calculate a/b
 	public static Num divide(Num a, Num b) {
+		/* Code to replace and test when by2 is implemented 
+	    Num sign = null;
+		if(isSignEqual(a, b)) {
+			sign = new Num(1);
+		}else {
+			sign = new Num(-1);
+		}
+		a = a.isNegative ? negateNumber(a) : a;
+		b = b.isNegative ? negateNumber(b) : b;
+		
+		if(b.compareTo(new Num(0)) == 0) {
+			throw new IllegalArgumentException("Cannot divide by zero");	
+		}
+		if(b.compareTo(new Num(1)) == 0) {
+			return product(a,sign);
+		}
+		if(b.compareTo(a) == 0) {
+			return sign;
+		}
+		Num low = new Num(0);
+		Num high = a;
+		while(true) {
+			Num mid = add( low, ( (subtract(high,low) ).by2() ));
+			if((subtract(product(b,mid),a)).compareTo(new Num(0)) <= 0) {
+				return product(mid,sign);
+			}
+			if(product(b,mid).compareTo(a) == -1) {
+				low = mid;
+			}else {
+				high = mid;
+			}
+		}
+		*/
 		Num dividend = a.isNegative ? negateNumber(a) : a;
 		Num divisor = b.isNegative ? negateNumber(b) : b;
 		boolean isNegative = isSignEqual(a, b) ? false : true;
