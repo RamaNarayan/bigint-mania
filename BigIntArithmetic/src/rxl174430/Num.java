@@ -138,6 +138,7 @@ import java.util.Arrays;
 		Num negatedNum = new Num(a.arr, a.len, !a.isNegative);
 		return negatedNum;
 	}
+ 	
  	public static Num subtract(Num a, Num b) {
 		
 		if(isSignEqual(a, b)) {
@@ -229,12 +230,23 @@ import java.util.Arrays;
 				i++;
 				k++;
 			}
-			return new Num(difference, k, isNegative);
+			return new Num(difference, getLengthWithoutLeadingZeros(difference), isNegative);
 		}
 		else {
 			return add(a,negateNumber(b));
 		}
 		
+ 	}
+ 	
+ 	public static int getLengthWithoutLeadingZeros(long[] a) {
+ 		int len = a.length;
+ 		int i = len-1;
+ 		int count=0;
+ 		while(i>0 && a[i]==0) {
+ 			count++;
+ 			i--;
+ 		}
+ 		return len - count;
  	}
  	public static Num product(Num a, Num b) {
 		boolean isNegative;
@@ -283,6 +295,7 @@ import java.util.Arrays;
 		} else {
 			isNegative = true;
 		}
+ 		
 		return new Num(product, k + 1, isNegative);
 	}
  	// Use divide and conquer
@@ -377,11 +390,16 @@ import java.util.Arrays;
 	}
  	public static void main(String[] args) {
 		long num = Long.MAX_VALUE;
-		Num a = new Num(1);
-		Num b = new Num(25);
+		Num a = new Num(16);
+		Num b = new Num(5);
 		Num x = new Num(9000);
-		Num y = new Num(10);
+		Num y = new Num(8990);
 		Num prod = Num.product(a, b);
-		prod.printList();
+		Num diff = Num.subtract(x ,y);
+		diff.printList();
+		//a.printList();
+		//b.printList();
+		Num sum = Num.add(a,b);
+		//sum.printList();
  	}
 }
