@@ -374,8 +374,25 @@ import java.util.Arrays;
 	}
  	// Use binary search
 	public static Num squareRoot(Num a) {
-		return null;
+			Num low = new Num(0);
+			Num high = a;
+			Num sqrt = new Num(1);
+			while(low.compareTo(high) <= 0) {
+				Num mid = add( low, ( (subtract(high,low)).by2() ));
+				Num operation = product(mid,mid);
+				int comparison = operation.compareTo(a);
+				if(comparison == -1) {
+					low = add(mid,new Num(1));
+					sqrt = mid;
+				}else if(comparison == 0){
+					return mid;
+				}else{
+					high = subtract(mid,new Num(1));
+				}
+			}
+			return sqrt;
 	}
+	
  	// Utility functions
 	// compare "this" to "other": return +1 if this is greater, 0 if equal, -1
 	// otherwise
@@ -426,7 +443,6 @@ import java.util.Arrays;
 	}
  	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
-		long[] arr = this.arr;
 		return null;
 	}
  	// Divide by 2, for using in binary search
@@ -454,11 +470,8 @@ import java.util.Arrays;
 		return null;
 	}
  	public static void main(String[] args) {
-		long num = Long.MAX_VALUE;
-		Num a = new Num(821);
-		Num b = new Num(17);
-		//(a.by2()).printList();
-		(Num.divide(a, b)).printList();
+		Num a = new Num(625);
+		(Num.squareRoot(a)).printList();
 		
  	}
 }
