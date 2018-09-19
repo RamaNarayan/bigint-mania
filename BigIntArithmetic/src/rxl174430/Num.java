@@ -95,6 +95,12 @@ import java.util.Arrays;
 	}
 
 	public static Num add(Num a, Num b) {
+		if(isNumberZero(a)) {
+			return b;
+		}
+		if(isNumberZero(b)) {
+			return a;
+		}
 		boolean isNegative;
 		if (a.isNegative && b.isNegative || !a.isNegative && !b.isNegative) {
 			if (a.isNegative && b.isNegative) {
@@ -156,6 +162,12 @@ import java.util.Arrays;
 	}
  	
  	public static Num subtract(Num a, Num b) {
+ 		if(isNumberZero(a)) {
+ 			return negateNumber(b);
+ 		}
+ 		if(isNumberZero(b)) {
+ 			return a;
+ 		}
 		
 		if(isSignEqual(a, b)) {
 			boolean isNegative;
@@ -265,6 +277,9 @@ import java.util.Arrays;
  		return len - count;
  	}
  	public static Num product(Num a, Num b) {
+ 		if(isNumberZero(a) || isNumberZero(b)) {
+ 			return new Num(0);
+ 		}
 		boolean isNegative;
 		int sizeOfLargerNum = 0;
 		int sizeOfSmallerNum = 0;
@@ -368,6 +383,11 @@ import java.util.Arrays;
 			}
 		}
 	}
+	
+	private static boolean isNumberZero(Num a) {
+		return (a.len == 1) && (a.arr[0] == 0);
+	}
+
  	// return a%b
 	public static Num mod(Num a, Num b) {
 		return null;
@@ -471,7 +491,10 @@ import java.util.Arrays;
 	}
  	public static void main(String[] args) {
 		Num a = new Num(625);
-		(Num.squareRoot(a)).printList();
+		Num b = new Num(10);
+		Num sum = sum(a,b);
+		sum.printList();
+		//(Num.squareRoot(a)).printList();
 		
  	}
 }
