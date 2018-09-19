@@ -325,7 +325,6 @@ import java.util.Arrays;
 	}
  	// Use binary search to calculate a/b
 	public static Num divide(Num a, Num b) {
-		/* Code to replace and test when by2 is implemented 
 	    Num sign = null;
 		if(isSignEqual(a, b)) {
 			sign = new Num(1);
@@ -344,44 +343,30 @@ import java.util.Arrays;
 		if(b.compareTo(a) == 0) {
 			return sign;
 		}
+		if(b.compareTo(a) > 0) {
+			return new Num(0);
+		}
 		Num low = new Num(0);
 		Num high = a;
 		while(true) {
-			Num mid = add( low, ( (subtract(high,low) ).by2() ));
-			if((subtract(product(b,mid),a)).compareTo(new Num(0)) <= 0) {
-				return product(mid,sign);
+			Num mid = add( low, ( (subtract(high,low)).by2() ));
+			Num operation = subtract(product(b,mid),a);
+			if(operation.isNegative) {
+				if((negateNumber(operation)).compareTo(b) <= 0) {
+					return product(mid,sign);
+				}
+			}else {
+				if((operation).compareTo(new Num(0)) == 0) {
+					return product(mid,sign);
+				}
 			}
+			
 			if(product(b,mid).compareTo(a) == -1) {
 				low = mid;
 			}else {
 				high = mid;
 			}
 		}
-		*/
-		Num dividend = a.isNegative ? negateNumber(a) : a;
-		Num divisor = b.isNegative ? negateNumber(b) : b;
-		boolean isNegative = isSignEqual(a, b) ? false : true;
-		int compare = dividend.compareTo(divisor);
-		Num quotient;
-		if (compare == -1) {
-			quotient =  new Num(0);
-		} else if (compare == 0) {
-			quotient = new Num(1);
-		} else {
-			Num diff = subtract(dividend, divisor);
-			int count = 1;
-			while (!diff.isNegative) {
-				diff = subtract(diff, divisor);
-				if (!diff.isNegative) {
-					count++;
-				}
-			}
-			if(isNegative)
-				quotient = negateNumber(new Num(count));
-			else
-				quotient = new Num(count);
-		}
-		return quotient;
 	}
  	// return a%b
 	public static Num mod(Num a, Num b) {
@@ -446,14 +431,22 @@ import java.util.Arrays;
 	}
  	// Divide by 2, for using in binary search
 	public Num by2() {
-		return null;
+		long carry = 0;
+		long[] newArr = new long[this.len];
+		for(int i=this.len-1; i>=0;i--) {
+			long remainder = this.arr[i]+ carry*base;
+			newArr[i] = remainder >> 1 ;
+			carry = remainder - (newArr[i]*2);
+		}
+		
+		return new Num(newArr, getLengthWithoutLeadingZeros(newArr), this.isNegative);
 	}
  	// Evaluate an expression in postfix and return resulting number
 	// Each string is one of: "*", "+", "-", "/", "%", "^", "0", or
 	// a number: [1-9][0-9]*. There is no unary minus operator.
 	public static Num evaluatePostfix(String[] expr) {
 		return null;
-	}
+	} 
  	// Evaluate an expression in infix and return resulting number
 	// Each string is one of: "*", "+", "-", "/", "%", "^", "(", ")", "0", or
 	// a number: [1-9][0-9]*. There is no unary minus operator.
@@ -462,17 +455,10 @@ import java.util.Arrays;
 	}
  	public static void main(String[] args) {
 		long num = Long.MAX_VALUE;
-		Num a = new Num(16);
-		Num b = new Num(5);
-		Num x = new Num(-10);
-		Num y = new Num(5);
-		Num prod = Num.product(a, b);
-		Num diff = Num.subtract(x ,y);
-		Num div = Num.divide(x, y);
-		div.printList();
-		//a.printList();
-		//b.printList();
-		Num sum = Num.add(a,b);
-		//sum.printList();
+		Num a = new Num(821);
+		Num b = new Num(17);
+		//(a.by2()).printList();
+		(Num.divide(a, b)).printList();
+		
  	}
 }
