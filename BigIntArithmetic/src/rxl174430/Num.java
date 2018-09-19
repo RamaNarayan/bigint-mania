@@ -403,7 +403,39 @@ public class Num implements Comparable<Num> {
 
 	// return a%b
 	public static Num mod(Num a, Num b) {
-		return null;
+		if (b.compareTo(new Num(0)) == 0) {
+			throw new IllegalArgumentException("Cannot divide by zero");
+		}
+		if (b.compareTo(new Num(1)) == 0) {
+			return new Num(0);
+		}
+		if (b.compareTo(a) == 0) {
+			return new Num(0);
+		}
+		if (b.compareTo(a) > 0) {
+			return a;
+		}
+		Num low = new Num(0);
+		Num high = a;
+		while (true) {
+			Num mid = add(low, ((subtract(high, low)).by2()));
+			Num operation = subtract(product(b, mid), a);
+			if (operation.isNegative) {
+				if ((negateNumber(operation)).compareTo(b) <= 0) {
+					return negateNumber(operation);
+				}
+			} else {
+				if ((operation).compareTo(new Num(0)) == 0) {
+					return new Num(0);
+				}
+			}
+
+			if (product(b, mid).compareTo(a) == -1) {
+				low = mid;
+			} else {
+				high = mid;
+			}
+		}
 	}
 
 	// Use binary search
@@ -623,13 +655,8 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num(625);
-		Num b = new Num(10);
-		Num sum = add(a, b);
-		sum.printList();
-		String[] expr = { "2", "+","(" ,"3", "-" ,"5",")","*","10" };
-		evaluateInfix(expr);
-		// (Num.squareRoot(a)).printList();
-
+		Num a = new Num(17);
+		Num b = new Num(9);
+		(Num.mod(a, b)).printList();
 	}
 }
