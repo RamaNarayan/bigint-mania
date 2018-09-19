@@ -492,7 +492,7 @@ import java.util.Arrays;
  	public static void main(String[] args) {
 		Num a = new Num(625);
 		Num b = new Num(10);
-		Num sum = sum(a,b);
+		Num sum = add(a,b);
 		sum.printList();
 		//(Num.squareRoot(a)).printList();
 		
