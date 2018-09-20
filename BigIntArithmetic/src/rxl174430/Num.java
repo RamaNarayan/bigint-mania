@@ -6,15 +6,16 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 10; // Change as needed
-	long base = defaultBase; // Change as needed
+	static long defaultBase = 2; // Change as needed
+	long base; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
 	int len; // actual number of elements of array that are used; number is stored in
 				// arr[0..len-1]
 
 	public Num(String s) {// assuming only positive number for now.
-		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(defaultBase)));
+		base = defaultBase;
+		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(base)));
 		arr = new long[(int) arrLength];
 		// System.out.println(arrLength + " " + arr.length);
 		if (s.charAt(0) == '-') {
@@ -31,6 +32,7 @@ public class Num implements Comparable<Num> {
 		this.arr = arr;
 		this.len = size;
 		this.isNegative = isNegative;
+		this.base = defaultBase;
 	}
 
 	public void recursive(String quotient, int index) {
@@ -41,7 +43,7 @@ public class Num implements Comparable<Num> {
 			}
 		}
 		long[] arrTemp;
-		long arrLength = 18 - Long.toString(defaultBase).length();
+		long arrLength = 18 - Long.toString(base).length();
 		arrTemp = new long[(int) ((quotient.length() / arrLength) + ((quotient.length() % arrLength) == 0 ? 0 : 1))];
 		String temp;
 		long remainder = 0;
@@ -68,9 +70,9 @@ public class Num implements Comparable<Num> {
 					quotientString = quotientString.concat("0");
 				}
 			}
-			remainder = arrTemp[(int) i] % defaultBase;
+			remainder = arrTemp[(int) i] % base;
 			// System.out.println("-->"+remainder);
-			quotientString = quotientString.concat(Long.toString(arrTemp[(int) i] / defaultBase));
+			quotientString = quotientString.concat(Long.toString(arrTemp[(int) i] / base));
 
 		}
 		// System.out.println("quotient string-" + quotientString);
@@ -79,6 +81,16 @@ public class Num implements Comparable<Num> {
 	}
 
 	public Num(long x) {
+		base = defaultBase;
+		constructNum(x);
+	}
+
+	public Num(long x, long base) {
+		this.base = base;
+		constructNum(x);
+	}
+
+	public void constructNum(long x) {
 		this.isNegative = x < 0 ? true : false;
 		int i = 0;
 		if (x == 0) {
@@ -102,7 +114,6 @@ public class Num implements Comparable<Num> {
 				i = i + 1;
 			}
 		}
-
 	}
 
 	public static Num add(Num a, Num b) {
@@ -513,7 +524,17 @@ public class Num implements Comparable<Num> {
 
 	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
-		return null;
+		if (newBase != base) {
+			Num num = this;
+			long defaultNum = 0;
+			for (int i = num.arr.length - 1; i >= 0; i--) {
+				defaultNum += (long) (num.arr[i] * Math.pow(base, i));
+			}
+			if (this.isNegative)
+				defaultNum = -defaultNum;
+			return new Num(defaultNum, newBase);
+		} else
+			return this;
 	}
 
 	// Divide by 2, for using in binary search
@@ -587,24 +608,30 @@ public class Num implements Comparable<Num> {
 
 	private static int getOperatorPriority(String operator) throws Exception {
 		int priority = 0;
-		switch(operator) {
-			case "+" : priority = 1;
+		switch (operator) {
+		case "+":
+			priority = 1;
 			break;
-			case "-" : priority = 1;
-				break;
-			case "*" : priority = 2;
-				break;
-			case "/" : priority = 2;
-				break;
-			case "%" : priority = 2;
-				break;
-			case "^" : priority = 3;
-				break;
-			default:
-				throw new Exception("Unsupported Operator");
+		case "-":
+			priority = 1;
+			break;
+		case "*":
+			priority = 2;
+			break;
+		case "/":
+			priority = 2;
+			break;
+		case "%":
+			priority = 2;
+			break;
+		case "^":
+			priority = 3;
+			break;
+		default:
+			throw new Exception("Unsupported Operator");
 		}
 		return priority;
-		
+
 	}
 
 	// Evaluate an expression in infix and return resulting number
@@ -619,35 +646,33 @@ public class Num implements Comparable<Num> {
 				queue.addLast(exp);
 			} else if (isOperator(exp)) {
 				String queueFront = queue.peekFirst();
-				if(!isOperator(queueFront)) {
+				if (!isOperator(queueFront)) {
 					stack.push(exp);
-				}
-				else if(getOperatorPriority(exp)>getOperatorPriority(queueFront)) {
+				} else if (getOperatorPriority(exp) > getOperatorPriority(queueFront)) {
 					stack.push(exp);
-				}
-				else {
-					while(getOperatorPriority(stack.peek())>=getOperatorPriority(exp)) {
+				} else {
+					while (getOperatorPriority(stack.peek()) >= getOperatorPriority(exp)) {
 						queue.addLast(stack.pop());
 					}
-				}				
+				}
 
 			} else if (exp.equals("(")) {
 				stack.push(exp);
 			} else if (exp.equals(")")) {
 				String topOfStack = stack.peek();
-				while(!topOfStack.equals("(")) {
+				while (!topOfStack.equals("(")) {
 					queue.addLast(stack.pop());
 					topOfStack = stack.peek();
 				}
-				stack.pop();				
+				stack.pop();
 			}
 		}
-		while(stack.size()>0) {
+		while (stack.size() > 0) {
 			queue.addLast(stack.pop());
 		}
-		//check whether the expr is right. Remove in production mode
+		// check whether the expr is right. Remove in production mode
 		Iterator it = queue.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			System.out.println(it.next());
 		}
 		String[] postfixExpression = queue.toArray(new String[queue.size()]);
@@ -655,8 +680,12 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num(17);
-		Num b = new Num(9);
-		(Num.mod(a, b)).printList();
+		Num a = new Num(36);
+		Num b = new Num(Long.MAX_VALUE);
+		a.printList();
+		Num res = b.convertBase(Integer.MAX_VALUE);
+		res.printList();
+		b.printList();
+
 	}
 }
