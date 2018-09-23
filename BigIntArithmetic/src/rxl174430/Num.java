@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 91911919; // Change as needed
+	static long defaultBase = 10; // Change as needed
 	long base; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
@@ -114,9 +114,6 @@ public class Num implements Comparable<Num> {
 			quotientString = quotientString.concat(Long.toString(temporaryNumber / base));
 
 		}
-		System.out.println("quotient string-" + quotientString);
-		System.out.println("Remainder string-" + remainder);
-		System.out.println(index);
 		arr[index] = remainder;
 		recursive(quotientString, index + 1);
 	}
@@ -570,21 +567,12 @@ public class Num implements Comparable<Num> {
 	// Return number to a string in base 10
 	@Override
 	public String toString() {
-		String result = "";
-		Num num = this;
-		String[] beforeDecimal = new String[num.arr.length];
-		for (int i = num.arr.length - 1; i >= 0; i--) {
-			beforeDecimal[i] = Double.toString(num.arr[i] * Math.pow(base, i));
+		Num n = convertBase(10);
+		StringBuilder sb = new StringBuilder();
+		for(int i = n.len - 1; i >= 0; i--) {
+			sb.append(Long.toString(n.arr[i]));
 		}
-		for (int i = 0; i < beforeDecimal.length; i = i + 2) {
-			String firstNumber = beforeDecimal[i];
-			String secondNumber = beforeDecimal[i + 1];
-			Double first = Double.parseDouble(firstNumber);
-			Double second = Double.parseDouble(secondNumber);
-			int length = first > second ? firstNumber.length() : secondNumber.length();
-			// for(int j=)
-		}
-		return result;
+		return sb.toString();
 	}
 
 	public long base() {
@@ -745,8 +733,10 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num("999999999999999999999999999999");
-		a.power(a, 10000).printList();
+		Num a = new Num("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
+		a.printList();
+		System.out.println(a.toString());
+		
 
 	}
 }
