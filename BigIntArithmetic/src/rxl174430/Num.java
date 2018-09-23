@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 64; // Change as needed
+	static long defaultBase = 919119199; // Change as needed
 	long base; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
@@ -87,6 +87,7 @@ public class Num implements Comparable<Num> {
 //
 //						}
 					} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
+					
 						temporaryNumber2 = Long.valueOf(Long.toString(remainder).concat(quotient.substring(
 								(int) (subLength),
 								(int) (subLength + Long.toString(base).length() - Long.toString(remainder).length()))));
@@ -132,7 +133,7 @@ public class Num implements Comparable<Num> {
 //							}
 //						}
 					} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
-
+						
 						Long lastPart = Long.parseLong(Long.toString(remainder)
 								.concat(quotient.substring((int) subLength, quotient.length())));
 						if (lastPart < base) {
@@ -170,6 +171,9 @@ public class Num implements Comparable<Num> {
 			*/
 			remainder = temporaryNumber % base;
 			System.out.print(" remainder- " + Long.toString(remainder));
+			if(!quotientString.isEmpty() && quotientString.equals("0")) {
+				quotientString = "";
+			}
 			quotientString = quotientString.concat(Long.toString(temporaryNumber / base));
 			System.out.println(" quotient" + quotientString);
 
@@ -814,11 +818,13 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num("-1000");
-		(a.convertBase(2)).printList();
+		Num a = new Num("2349827349725947929679876765467054609836803684560846045680345870807805687506875038308608609465809568058793589674985385093590238050268042870956803945802936809248760358570946092438609385708350780456809406830978350697804807805609650");
+		
+		
+		//(a.convertBase(2)).printList();
 		a.printList();
 		System.out.println(a.toString());
-		System.out.println((a.convertBase(2)).toString());
+		//System.out.println((a.convertBase(2)).toString());
 		
 		
 
