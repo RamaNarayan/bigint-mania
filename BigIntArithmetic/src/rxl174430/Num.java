@@ -2,17 +2,15 @@ package rxl174430;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 4; // Change as needed
-	long base; // Change as needed
-	long[] arr; // array to store arbitrarily large integers
-	boolean isNegative; // boolean flag to represent negative numbers
-	int len; // actual number of elements of array that are used; number is stored in
-				// arr[0..len-1]
+	static long defaultBase = 10;
+	long base;
+	long[] arr;
+	boolean isNegative;
+	int len;
 
-	public Num(String s) {// assuming only positive number for now.
+	public Num(String s) {
 		base = defaultBase;
 		constructStringNum(s);
 	}
@@ -21,7 +19,7 @@ public class Num implements Comparable<Num> {
 		// Handle for new Num("-00000000000000000") len is 0 and arrayLength considers "-" and leading zeroes in its calculation 
 		// Handle Small bases
 		long arrLength = (long) Math.ceil((s.length()+1) * (Math.log(10) / Math.log(base))+1);
-		System.out.println(arrLength);
+		//System.out.println(arrLength);
 		arr = new long[(int) arrLength];
 		if (s.charAt(0) == '-') {
 			isNegative = true;
@@ -40,7 +38,7 @@ public class Num implements Comparable<Num> {
 		this.base = defaultBase;
 	}
 
-	public void recursive(String quotient, int index) {
+	private void recursive(String quotient, int index) {
 		if (quotient.length() < 19) {
 			if (Long.parseLong(quotient) == 0) {
 				len = index;
@@ -140,7 +138,7 @@ public class Num implements Comparable<Num> {
 								.concat(quotient.substring((int) subLength, quotient.length())));
 						if (lastPart < base) {
 							for (int z = 0; z < quotient.substring((int) subLength, quotient.length()).length()-1; z++) {
-								System.out.println("hello"+z);
+								//System.out.println("hello"+z);
 								quotientString = quotientString.concat("0");
 							}
 							
@@ -190,10 +188,31 @@ public class Num implements Comparable<Num> {
 
 	public Num(long x) {
 		base = defaultBase;
-		constructLongNum(x);
+		if (x == Long.MIN_VALUE) {
+			constructStringNum(Long.toString(x));
+		}
+		else {
+			if (x == 0) {
+				len = 1;
+				arr = new long[len];
+				arr[len - 1] = x;
+			} else {
+				this.isNegative = x < 0 ? true : false;
+				int i = 0;
+				x = Math.abs(x);
+				len = getNumberLength(x);
+				arr = new long[len];
+				i = 0;
+				while (x > 0) {
+					arr[i] = x % base;
+					x = x / base;
+					i = i + 1;
+				}
+			}
+		}		
 	}
 
-	public Num(String x, long base) {
+	private Num(String x, long base) {
 		this.base = base;
 		constructStringNum(x);
 	}
@@ -206,31 +225,7 @@ public class Num implements Comparable<Num> {
 		}
 		return i;
 	}
-
-	public void constructLongNum(long x) {
-		if (x == Long.MIN_VALUE) {
-			// call string constructor
-		}
-
-		if (x == 0) {
-			len = 1;
-			arr = new long[len];
-			arr[len - 1] = x;
-		} else {
-			this.isNegative = x < 0 ? true : false;
-			int i = 0;
-			x = Math.abs(x);
-			len = getNumberLength(x);
-			arr = new long[len];
-			i = 0;
-			while (x > 0) {
-				arr[i] = x % base;
-				x = x / base;
-				i = i + 1;
-			}
-		}
-	}
-
+	
 	public static Num add(Num a, Num b) {
 		if (isNumberZero(a)) {
 			return b;
@@ -364,13 +359,11 @@ public class Num implements Comparable<Num> {
 				}
 
 			}
-			if ((!a.isNegative && !b.isNegative) || (a.isNegative && b.isNegative)) {
-				int compare = a.compareTo(b);
-				if (compare == -1) {
-					isNegative = true;
-				} else {
-					isNegative = false;
-				}
+			int compare = a.compareTo(b);
+			if (compare == -1) {
+				isNegative = true;
+			} else {
+				isNegative = false;
 			}
 			long[] difference = new long[sizeOfDiff];
 			int i = 0;
@@ -388,12 +381,15 @@ public class Num implements Comparable<Num> {
 				i++;
 				j++;
 				k++;
+				
 			}
 			while (i < firstNumberLength) {
-				if ((firstNumber[i] - carry) > 0) {
+				if ((firstNumber[i] - carry) >= 0) {
 					difference[k] = firstNumber[i] - carry;
+					carry = 0;
 				} else {
 					difference[k] = (firstNumber[i] + defaultBase) - carry;
+					carry = 1;
 				}
 				i++;
 				k++;
@@ -470,7 +466,7 @@ public class Num implements Comparable<Num> {
 		return new Num(product, k + 1, isNegative);
 	}
 
-	// Use divide and conquer
+	
 	public static Num power(Num a, long n) {
 		return power(a, new Num(n));
 	}
@@ -484,7 +480,7 @@ public class Num implements Comparable<Num> {
 		}
 	}
 
-	// Use binary search to calculate a/b
+	
 	public static Num divide(Num a, Num b) {
 		Num sign = null;
 		if (isSignEqual(a, b)) {
@@ -534,7 +530,7 @@ public class Num implements Comparable<Num> {
 		return (a.len == 1) && (a.arr[0] == 0);
 	}
 
-	// return a%b
+	
 	public static Num mod(Num a, Num b) {
 		if (b.compareTo(new Num(0)) == 0) {
 			throw new IllegalArgumentException("Cannot divide by zero");
@@ -571,7 +567,7 @@ public class Num implements Comparable<Num> {
 		}
 	}
 
-	// Use binary search
+	
 	public static Num squareRoot(Num a) {
 		Num low = new Num(0);
 		Num high = a;
@@ -592,9 +588,7 @@ public class Num implements Comparable<Num> {
 		return sqrt;
 	}
 
-	// Utility functions
-	// compare "this" to "other": return +1 if this is greater, 0 if equal, -1
-	// otherwise
+	
 	@Override
 	public int compareTo(Num other) {
 		if ((this.isNegative && other.isNegative) || (!this.isNegative && !other.isNegative)) {
@@ -623,9 +617,7 @@ public class Num implements Comparable<Num> {
 		}
 	}
 
-	// Output using the format "base: elements of list ..."
-	// For example, if base=100, and the number stored corresponds to 10965,
-	// then the output is "100: 65 9 1"
+	
 	public void printList() {
 		System.out.print(base() + ": ");
 		for (int i = 0; i < len; i++) {
@@ -634,7 +626,7 @@ public class Num implements Comparable<Num> {
 		System.out.println(isNegative ? "-" : "");
 	}
 
-	// Return number to a string in base 10
+
 	@Override
 	public String toString() {
 		Num n = convertNumToBase10(this);
@@ -669,7 +661,6 @@ public class Num implements Comparable<Num> {
 		return newNum;
 	}
 
-	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
 		if (newBase != base) {
 			return new Num(toString(), newBase);
@@ -677,7 +668,6 @@ public class Num implements Comparable<Num> {
 			return this;
 	}
 
-	// Divide by 2, for using in binary search
 	public Num by2() {
 		long carry = 0;
 		long[] newArr = new long[this.len];
@@ -726,9 +716,7 @@ public class Num implements Comparable<Num> {
 		return result;
 	}
 
-	// Evaluate an expression in postfix and return resulting number
-	// Each string is one of: "*", "+", "-", "/", "%", "^", "0", or
-	// a number: [1-9][0-9]*. There is no unary minus operator.
+	
 	public static Num evaluatePostfix(String[] expr) throws Exception {
 		Deque<String> stack = new ArrayDeque<String>();
 		for (String exp : expr) {
@@ -775,9 +763,6 @@ public class Num implements Comparable<Num> {
 
 	}
 
-	// Evaluate an expression in infix and return resulting number
-	// Each string is one of: "*", "+", "-", "/", "%", "^", "(", ")", "0", or
-	// a number: [1-9][0-9]*. There is no unary minus operator.
 	public static Num evaluateInfix(String[] expr) throws Exception {
 		Deque<String> stack = new ArrayDeque<String>();
 		Deque<String> queue = new ArrayDeque<String>();
@@ -807,22 +792,12 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//String breakString = "1230012000001223000000000123000000000099999999999999999900001232400009090901232190239203920392392039203920392039203920392039203920392039203902390239203920392039203920392039203923029302932039203920392039203920390293029302930293023902930293029302390239320930239203920392039203920392039203920000000000000000000000000000320309203902390293023902390293029302930293023902930293029302930239023920390239023901293027432748486474723647264757263746238746237747273642387647283642873462374628572647326473264783264328749883498297432647226232759894727676423842839372837648293492849749362487364837595890383367326682354732864989237400923842093843264736487453746982347094384098403948263487326472369842634762347426387642876483610742812742614782864182647316487164678135473649814691464193746981446741649814671464387451984682460184647934618745873548345187451974591224541874518745137845138745318745318745137451874518734538745374517451847516458174598164981464198457145921549124519424560120100000000000006734637846387462387463278463746738647836471854614538747354731546354154871354915491345000000000000000047631473141784587315483745187451874587145478145874583745783453187541387453187453187458731534873547853478357453178548715487315473184587315187457835437845137854784135487143547815478354875387458137354783548371543817453175458137454781354783154871354187541874531875418754875418714357813587458731543187548731548731453817548713587145478135487135487134548713548713548137345781354587344873437583457844574547545857345887543184000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014352143524352134251342653421356425213465213412312371238723871236123617263127367123612736172361273682713621783621786328716387213687216387236871263736123672317821387372862367632166287267236732263231623672623168213672136236721367213726723673216832168278231682136621362316732168231672316823168213872317821362316286326132672318723167823118723167231672316721362317231623178231623667326132600001832983021392038129038109380921";
-		//  System.out.println(breakString.length());
-		//  Num a = new Num(breakString);
-		  
-		  //(a.convertBase(2)).printList();
-		 // a.printList();
-		 // String convertBackAgain = a.toString();
-		 // System.out.println(breakString.equalsIgnoreCase(convertBackAgain));
-		  String[] arr = {"2","^","64","/","2"};
-		  System.out.println(evaluateInfix(arr));
-		  System.out.println(Long.MIN_VALUE);
-		  Num a = new Num("1");
-		  a.printList();
-		  System.out.println(a.len);
-		
-		
-
+		Num a = new Num(Long.MIN_VALUE);
+		Num b = new Num(Long.MIN_VALUE+1);
+		a.printList();
+		b.printList();
+		Num sub = subtract(a,b);
+		sub.printList();
+		System.out.println(sub.toString());
 	}
 }
