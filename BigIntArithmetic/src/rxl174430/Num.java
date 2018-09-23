@@ -18,6 +18,7 @@ public class Num implements Comparable<Num> {
 	}
 
 	private void constructStringNum(String s) {
+		// Handle for new Num("-00000000000000000") len is 0 and arrayLength considers "-" and leading zeroes in its calculation 
 		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(base)));
 		arr = new long[(int) arrLength];
 		System.out.println(arrLength + " " + arr.length);
@@ -569,6 +570,9 @@ public class Num implements Comparable<Num> {
 	public String toString() {
 		Num n = convertBase(10);
 		StringBuilder sb = new StringBuilder();
+		if(n.isNegative && !isNumberZero(n)) {
+			sb.append('-');
+		}
 		for(int i = n.len - 1; i >= 0; i--) {
 			sb.append(Long.toString(n.arr[i]));
 		}
@@ -733,7 +737,7 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num("9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
+		Num a = new Num("-0000");
 		a.printList();
 		System.out.println(a.toString());
 		
