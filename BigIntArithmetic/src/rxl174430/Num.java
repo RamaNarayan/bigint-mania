@@ -57,65 +57,129 @@ public class Num implements Comparable<Num> {
 		String quotientString = "";
 		// System.out.println(arrLength + " " + arrTemp.length);
 		for (long i = 0; i < temporaryLength; i = i + 1) {
-			// System.out.println("i-" + i);
-			// if (remainder != 0) {
-			temp = Long.toString(remainder)
-					.concat(quotient.substring((int) (i * arrLength),
-							(int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength
-									: quotient.length())));
+			long subLength = i * arrLength;
+			temp = Long.toString(remainder).concat(quotient.substring((int) (subLength),
+					(int) ((subLength + arrLength) < quotient.length() ? (subLength + arrLength) : quotient.length())));
 			temporaryNumber = Long.valueOf(temp);
-//			} else {
-//				temporaryNumber = Long.valueOf(quotient.substring((int) (i * arrLength),
-//						(int) (((i * arrLength) + arrLength) < quotient.length() ? (i * arrLength) + arrLength
-//								: quotient.length())));
-//				// if remainder becomes zero mid division, we need to add zeros to quotient
-//
-//			}
-			// System.out.print(arrTemp[(int) i]+"-->"+arrTemp[(int) i] / defaultBase);
-
 			// Remainder handling
-			if (remainder == 0 && i != 0) {
-				temporaryNumber2 = Long.valueOf(quotient.substring((int) (i * arrLength),
-						(int) (i * arrLength + Long.toString(base).length())));
-				if (base <= temporaryNumber2) {
-					for (int z = 0; z < Long.toString(base).length() - 1; z++) {
-						quotientString = quotientString.concat("0");
+			if (i != 0) {
+				if (i != temporaryLength - 1) {
+					if (remainder == 0) {
+						int iter = 0;
+						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
+								(int) (subLength + iter + 1)));
+						
+						while(iter < arrLength-1 && temporaryNumber2 < base) {
+							
+							quotientString = quotientString.concat("0");
+							iter++;
+							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
+									(int) (subLength + iter + 1)));
+						}
+//						if (base <= temporaryNumber2) {
+//							for (int z = 0; z < Long.toString(base).length() - 1; z++) {
+//								quotientString = quotientString.concat("0");
+//							}
+//						} else {
+//							for (int z = 0; z < Long.toString(base).length(); z++) {
+//								quotientString = quotientString.concat("0");
+//							}
+//
+//						}
+					} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
+						temporaryNumber2 = Long.valueOf(Long.toString(remainder).concat(quotient.substring(
+								(int) (subLength),
+								(int) (subLength + Long.toString(base).length() - Long.toString(remainder).length()))));
+						if (base <= temporaryNumber2) {
+							for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length()
+									- 1; z++) {
+								quotientString = quotientString.concat("0");
+							}
+						} else {
+							for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length(); z++) {
+								quotientString = quotientString.concat("0");
+							}
+
+						}
 					}
-				} else {
-					for (int z = 0; z < Long.toString(base).length(); z++) {
-						quotientString = quotientString.concat("0");
+				} else if (i == temporaryLength - 1) {
+
+					if (remainder == 0) {
+
+						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (int) (subLength + 1)));
+						int iter = (int)subLength;
+						while(iter < quotient.length()-1 && temporaryNumber2 < base) {
+							quotientString = quotientString.concat("0");
+							iter++;
+							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
+									(int) (iter)));
+						}
+//						if (temporaryNumber2 < base) {
+//							for (int z = 0; z < Long.toString(temporaryNumber2).length(); z++) {
+//								quotientString = quotientString.concat("0");
+//							}
+//						} else {
+//							long var1 = Long.parseLong(
+//									Long.toString(temporaryNumber2).substring(0, Long.toString(base).length()));
+//							if (var1 < base) {
+//								for (int z = 0; z < Long.toString(var1).length(); z++) {
+//									quotientString = quotientString.concat("0");
+//								}
+//							} else {
+//								for (int z = 0; z < Long.toString(var1).length() - 1; z++) {
+//									quotientString = quotientString.concat("0");
+//								}
+//							}
+//						}
+					} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
+
+						Long lastPart = Long.parseLong(Long.toString(remainder)
+								.concat(quotient.substring((int) subLength, quotient.length())));
+						if (lastPart < base) {
+							for (int z = 0; z < quotient.substring((int) subLength, quotient.length()).length()-1; z++) {
+								System.out.println("hello"+z);
+								quotientString = quotientString.concat("0");
+							}
+							
+						} else {//copy need to test
+							temporaryNumber2 = Long.valueOf(Long.toString(remainder)
+									.concat(quotient.substring((int) (subLength), (int) (subLength
+											+ Long.toString(base).length() - Long.toString(remainder).length()))));
+							if (base <= temporaryNumber2) {
+								for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length()
+										- 1; z++) {
+									quotientString = quotientString.concat("0");
+								}
+							} else {
+								for (int z = 0; z < Long.toString(base).length()
+										- Long.toString(remainder).length(); z++) {
+									quotientString = quotientString.concat("0");
+								}
+
+							}
+						}
 					}
 
 				}
-			} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
-				temporaryNumber2 = Long.valueOf(Long.toString(remainder).concat(quotient.substring(
-						(int) (i * arrLength),
-						(int) (i * arrLength + Long.toString(base).length() - Long.toString(remainder).length()))));
-				if (base <= temporaryNumber2) {
-					for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length() - 1; z++) {
-						quotientString = quotientString.concat("0");
-					}
-				} else {
-					for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length(); z++) {
-						quotientString = quotientString.concat("0");
-					}
-
-				}
-
 			}
-
+			System.out.print("temporaryNumber" + Long.toString(temporaryNumber));
 			/*
-			 * if (remainder == 0 && i != 0) { for (int z = 0; z <
-			 * Long.toString(temporaryNumber).length() - 1; z++) { quotientString =
-			 * quotientString.concat("0"); } }
-			 */
+			* if (remainder == 0 && i != 0) { for (int z = 0; z <
+			* Long.toString(temporaryNumber).length() - 1; z++) { quotientString =
+			* quotientString.concat("0"); } }
+			*/
 			remainder = temporaryNumber % base;
-			// System.out.println("-->"+remainder);
+			System.out.print(" remainder- " + Long.toString(remainder));
 			quotientString = quotientString.concat(Long.toString(temporaryNumber / base));
+			System.out.println(" quotient" + quotientString);
 
 		}
+		System.out.println("quotient string-" + quotientString);
+		System.out.println("Remainder string-" + remainder);
+		System.out.println(index);
 		arr[index] = remainder;
 		recursive(quotientString, index + 1);
+
 	}
 
 	public Num(long x) {
