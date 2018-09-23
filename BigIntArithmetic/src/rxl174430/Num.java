@@ -582,6 +582,22 @@ public class Num implements Comparable<Num> {
 	public long base() {
 		return base;
 	}
+	
+
+	private Num convertNumToBase10(Num num) {
+		int i = num.len-1;
+		long tempBase = defaultBase;
+		defaultBase = 10;
+		Num newNum = new Num(num.arr[i]);
+		Num baseNum = new Num(base);
+		while(i>0) {
+			Num prodNum = product(newNum,baseNum);
+			newNum = add(prodNum,new Num(num.arr[i-1]));
+			i--;
+		}
+		defaultBase = tempBase;
+		return newNum;
+	}
 
 	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
