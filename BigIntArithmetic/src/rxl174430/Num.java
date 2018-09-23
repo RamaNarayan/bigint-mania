@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 919119199; // Change as needed
+	static long defaultBase = 4; // Change as needed
 	long base; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
@@ -19,7 +19,9 @@ public class Num implements Comparable<Num> {
 
 	private void constructStringNum(String s) {
 		// Handle for new Num("-00000000000000000") len is 0 and arrayLength considers "-" and leading zeroes in its calculation 
-		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(base)));
+		// Handle Small bases
+		long arrLength = (long) Math.ceil((s.length()+1) * (Math.log(10) / Math.log(base))+1);
+		System.out.println(arrLength);
 		arr = new long[(int) arrLength];
 		if (s.charAt(0) == '-') {
 			isNegative = true;
@@ -108,8 +110,8 @@ public class Num implements Comparable<Num> {
 					if (remainder == 0) {
 
 						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (int) (subLength + 1)));
-						int iter = (int)subLength;
-						while(iter < quotient.length()-1 && temporaryNumber2 < base) {
+						int iter = (int)subLength + 1;
+						while(iter < quotient.length() && temporaryNumber2 < base) {
 							quotientString = quotientString.concat("0");
 							iter++;
 							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
@@ -163,24 +165,24 @@ public class Num implements Comparable<Num> {
 
 				}
 			}
-			System.out.print("temporaryNumber" + Long.toString(temporaryNumber));
+			//System.out.print("temporaryNumber" + Long.toString(temporaryNumber));
 			/*
 			* if (remainder == 0 && i != 0) { for (int z = 0; z <
 			* Long.toString(temporaryNumber).length() - 1; z++) { quotientString =
 			* quotientString.concat("0"); } }
 			*/
 			remainder = temporaryNumber % base;
-			System.out.print(" remainder- " + Long.toString(remainder));
+			//System.out.print(" remainder- " + Long.toString(remainder));
 			if(!quotientString.isEmpty() && quotientString.equals("0")) {
 				quotientString = "";
 			}
 			quotientString = quotientString.concat(Long.toString(temporaryNumber / base));
-			System.out.println(" quotient" + quotientString);
+			//System.out.println(" quotient" + quotientString);
 
 		}
-		System.out.println("quotient string-" + quotientString);
-		System.out.println("Remainder string-" + remainder);
-		System.out.println(index);
+		//System.out.println("quotient string-" + quotientString);
+		//System.out.println("Remainder string-" + remainder);
+		//System.out.println(index);
 		arr[index] = remainder;
 		recursive(quotientString, index + 1);
 
@@ -818,13 +820,15 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num("2349827349725947929679876765467054609836803684560846045680345870807805687506875038308608609465809568058793589674985385093590238050268042870956803945802936809248760358570946092438609385708350780456809406830978350697804807805609650");
+		String breakString = "1230012000001223000000000123000000000099999999999999999900001232400009090901232190239203920392392039203920392039203920392039203920392039203902390239203920392039203920392039203923029302932039203920392039203920390293029302930293023902930293029302390239320930239203920392039203920392039203920000000000000000000000000000320309203902390293023902390293029302930293023902930293029302930239023920390239023901293027432748486474723647264757263746238746237747273642387647283642873462374628572647326473264783264328749883498297432647226232759894727676423842839372837648293492849749362487364837595890383367326682354732864989237400923842093843264736487453746982347094384098403948263487326472369842634762347426387642876483610742812742614782864182647316487164678135473649814691464193746981446741649814671464387451984682460184647934618745873548345187451974591224541874518745137845138745318745318745137451874518734538745374517451847516458174598164981464198457145921549124519424560120100000000000006734637846387462387463278463746738647836471854614538747354731546354154871354915491345000000000000000047631473141784587315483745187451874587145478145874583745783453187541387453187453187458731534873547853478357453178548715487315473184587315187457835437845137854784135487143547815478354875387458137354783548371543817453175458137454781354783154871354187541874531875418754875418714357813587458731543187548731548731453817548713587145478135487135487134548713548713548137345781354587344873437583457844574547545857345887543184000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014352143524352134251342653421356425213465213412312371238723871236123617263127367123612736172361273682713621783621786328716387213687216387236871263736123672317821387372862367632166287267236732263231623672623168213672136236721367213726723673216832168278231682136621362316732168231672316823168213872317821362316286326132672318723167823118723167231672316721362317231623178231623667326132600001832983021392038129038109380921";
+		  System.out.println(breakString.length());
+		  Num a = new Num(breakString);
+		  
+		  //(a.convertBase(2)).printList();
+		  a.printList();
+		  String convertBackAgain = a.toString();
+		  System.out.println(breakString.equalsIgnoreCase(convertBackAgain));
 		
-		
-		//(a.convertBase(2)).printList();
-		a.printList();
-		System.out.println(a.toString());
-		//System.out.println((a.convertBase(2)).toString());
 		
 		
 
