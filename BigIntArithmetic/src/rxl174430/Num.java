@@ -6,15 +6,25 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 2; // Change as needed
+	static long defaultBase = 64; // Change as needed
 	long base; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
+	String originalNumber;
 	int len; // actual number of elements of array that are used; number is stored in
 				// arr[0..len-1]
 
 	public Num(String s) {// assuming only positive number for now.
 		base = defaultBase;
+		if (s.startsWith("-")) {
+			originalNumber = s.substring(1);
+		} else
+			originalNumber = s;
+		constructStringNum(s);
+	}
+
+	private void constructStringNum(String s) {
+		originalNumber = s;
 		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(base)));
 		arr = new long[(int) arrLength];
 		// System.out.println(arrLength + " " + arr.length);
@@ -75,22 +85,27 @@ public class Num implements Comparable<Num> {
 			quotientString = quotientString.concat(Long.toString(arrTemp[(int) i] / base));
 
 		}
-		// System.out.println("quotient string-" + quotientString);
-		arr[index] = remainder;
-		recursive(quotientString, index + 1);
+		System.out.println("quotient string-" + quotientString);
+		System.out.println(index);
+		if (index != 32) {
+			arr[index] = remainder;
+
+			recursive(quotientString, index + 1);
+		}
 	}
 
 	public Num(long x) {
 		base = defaultBase;
-		constructNum(x);
+		constructLongNum(x);
 	}
 
-	public Num(long x, long base) {
+	public Num(String x, long base) {
 		this.base = base;
-		constructNum(x);
+		constructStringNum(x);
 	}
 
-	public void constructNum(long x) {
+	public void constructLongNum(long x) {
+		originalNumber = Long.toString(Math.abs(x));
 		this.isNegative = x < 0 ? true : false;
 		int i = 0;
 		if (x == 0) {
@@ -515,7 +530,7 @@ public class Num implements Comparable<Num> {
 	// Return number to a string in base 10
 	@Override
 	public String toString() {
-		return null;
+		return this.originalNumber;
 	}
 
 	public long base() {
@@ -525,14 +540,10 @@ public class Num implements Comparable<Num> {
 	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
 		if (newBase != base) {
-			Num num = this;
-			long defaultNum = 0;
-			for (int i = num.arr.length - 1; i >= 0; i--) {
-				defaultNum += (long) (num.arr[i] * Math.pow(base, i));
-			}
+			String num = this.originalNumber;
 			if (this.isNegative)
-				defaultNum = -defaultNum;
-			return new Num(defaultNum, newBase);
+				num = "-" + num;
+			return new Num(num, newBase);
 		} else
 			return this;
 	}
@@ -680,12 +691,18 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num(36);
-		Num b = new Num(Long.MAX_VALUE);
+		long max = Long.MAX_VALUE;
+		String maxS = Long.toString(max);
+		Num a = new Num(maxS + "12345");
+		// Num c = new Num(maxS + maxS + maxS);
+		// System.out.println(maxS + maxS + maxS);
+		// Num b = new Num(Long.MIN_VALUE + 1);
 		a.printList();
-		Num res = b.convertBase(Integer.MAX_VALUE);
+		Num res = a.convertBase(Integer.MAX_VALUE);
 		res.printList();
-		b.printList();
+		System.out.println("Result is " + res.toString());
+		// b.printList();
+		// Num.mod(c, a).printList();
 
 	}
 }
