@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 10;
+	static long defaultBase = 120;
 	long base;
 	long[] arr;
 	boolean isNegative;
@@ -226,6 +226,9 @@ public class Num implements Comparable<Num> {
 		return i;
 	}
 	
+	private Num createCopy() {
+		return new Num(this.arr,this.len,this.isNegative);
+	}
 	public static Num add(Num a, Num b) {
 		if (isNumberZero(a)) {
 			return b;
@@ -291,8 +294,7 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static Num negateNumber(Num a) {
-		Num negatedNum = new Num(a.arr, a.len, !a.isNegative);
-		return negatedNum;
+		return new Num(a.arr, a.len, !a.isNegative);
 	}
 
 	public static Num subtract(Num a, Num b) {
@@ -488,40 +490,41 @@ public class Num implements Comparable<Num> {
 		} else {
 			sign = new Num(-1);
 		}
-		a = a.isNegative ? negateNumber(a) : a;
-		b = b.isNegative ? negateNumber(b) : b;
+		Num dividend = a.isNegative ? negateNumber(a) : a.createCopy();
+		Num divisor = b.isNegative ? negateNumber(b) : b.createCopy();
 
-		if (b.compareTo(new Num(0)) == 0) {
+		if (divisor.compareTo(new Num(0)) == 0) {
 			throw new IllegalArgumentException("Cannot divide by zero");
 		}
-		if (b.compareTo(new Num(1)) == 0) {
-			return product(a, sign);
+		if (divisor.compareTo(new Num(1)) == 0) {
+			return product(dividend, sign);
 		}
-		if (b.compareTo(a) == 0) {
+		if (divisor.compareTo(dividend) == 0) {
 			return sign;
 		}
-		if (b.compareTo(a) > 0) {
+		if (divisor.compareTo(dividend) > 0) {
 			return new Num(0);
 		}
 		Num low = new Num(0);
-		Num high = a;
+		Num high = dividend;
 		while (true) {
-			Num mid = add(low, ((subtract(high, low)).by2()));
-			Num operation = subtract(product(b, mid), a);
-			if (operation.isNegative) {
-				if ((negateNumber(operation)).compareTo(b) <= 0) {
-					return product(mid, sign);
+			Num quotient = add(low, (subtract(high, low)).by2());
+			Num divisor_quotient_product = product(divisor, quotient);
+			Num remainder = subtract(divisor_quotient_product, dividend);
+			if (remainder.isNegative) {
+				if ((negateNumber(remainder)).compareTo(divisor) < 0) {
+					return product(quotient, sign);
 				}
 			} else {
-				if ((operation).compareTo(new Num(0)) == 0) {
-					return product(mid, sign);
+				if ((remainder).compareTo(new Num(0)) == 0) {
+					return product(quotient, sign);
 				}
 			}
-
-			if (product(b, mid).compareTo(a) == -1) {
-				low = mid;
+			
+			if (divisor_quotient_product.compareTo(dividend) == -1) {
+				low = quotient;
 			} else {
-				high = mid;
+				high = quotient;
 			}
 		}
 	}
@@ -550,7 +553,7 @@ public class Num implements Comparable<Num> {
 			Num mid = add(low, ((subtract(high, low)).by2()));
 			Num operation = subtract(product(b, mid), a);
 			if (operation.isNegative) {
-				if ((negateNumber(operation)).compareTo(b) <= 0) {
+				if ((negateNumber(operation)).compareTo(b) < 0) {
 					return negateNumber(operation);
 				}
 			} else {
@@ -792,12 +795,11 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num(Long.MIN_VALUE);
-		Num b = new Num(Long.MIN_VALUE+1);
-		a.printList();
-		b.printList();
-		Num sub = subtract(a,b);
-		sub.printList();
-		System.out.println(sub.toString());
+		//Num a = new Num("100000000000000000000");
+		//Num b = new Num("20000000");
+		//System.out.println((Num.divide(a, b)).toString());
+		Num a = new Num("2980232238769");
+		Num b = new Num("5960464477539");
+		System.out.println((Num.divide(b,a)).toString());
 	}
 }
