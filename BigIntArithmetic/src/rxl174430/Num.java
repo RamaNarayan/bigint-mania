@@ -405,11 +405,15 @@ public class Num implements Comparable<Num> {
 
 	// Use divide and conquer
 	public static Num power(Num a, long n) {
-		if (n == 0) {
+		return power(a, new Num(n));
+	}
+	
+	private static Num power(Num a, Num n) {
+		if (isNumberZero(n)) {
 			return new Num(1);
 		} else {
-			Num p = power(Num.product(a, a), n / 2);
-			return (n % 2) == 1 ? Num.product(p, a) : p;
+			Num p = power(Num.product(a, a), n.by2());
+			return mod(n,new Num(2)).compareTo(new Num(1)) == 0 ? Num.product(p, a) : p;
 		}
 	}
 
@@ -741,25 +745,8 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		long max = Long.MAX_VALUE;
-		String maxS = Long.toString(max);
-		// Num a = new Num("12345");
-		// Num c = new Num(maxS + maxS + maxS);
-		// System.out.println(maxS + maxS + maxS);
-		// Num b = new Num(Long.MAX_VALUE - 12345);
-		// Num c = Num.add(a, b);
-		// c.printList();
-		// System.out.println(c.toString());
-		// a.printList();
-		// Num res = a.convertBase(Integer.MAX_VALUE);
-		// res.printList();
-		// System.out.println("Result is " + res.toString());
-		// a.printList();
-		// System.out.println(a.toString());
-		// Num.mod(c, a).printList();
-
-		Num shubh = new Num("-999999999999999999999999999999");
-		shubh.printList();
+		Num a = new Num("999999999999999999999999999999");
+		a.power(a, 10000).printList();
 
 	}
 }
