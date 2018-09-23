@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 10; // Change as needed
+	static long defaultBase = 64; // Change as needed
 	long base; // Change as needed
 	long[] arr; // array to store arbitrarily large integers
 	boolean isNegative; // boolean flag to represent negative numbers
@@ -21,7 +21,6 @@ public class Num implements Comparable<Num> {
 		// Handle for new Num("-00000000000000000") len is 0 and arrayLength considers "-" and leading zeroes in its calculation 
 		long arrLength = (long) Math.ceil(s.length() * (Math.log(10) / Math.log(base)));
 		arr = new long[(int) arrLength];
-		System.out.println(arrLength + " " + arr.length);
 		if (s.charAt(0) == '-') {
 			isNegative = true;
 			recursive(s.substring(1, s.length()), 0);
@@ -568,7 +567,7 @@ public class Num implements Comparable<Num> {
 	// Return number to a string in base 10
 	@Override
 	public String toString() {
-		Num n = convertBase(10);
+		Num n = convertNumToBase10(this);
 		StringBuilder sb = new StringBuilder();
 		if(n.isNegative && !isNumberZero(n)) {
 			sb.append('-');
@@ -586,7 +585,7 @@ public class Num implements Comparable<Num> {
 
 	private Num convertNumToBase10(Num num) {
 		int i = num.len-1;
-		long tempBase = defaultBase;
+		long originalBase = defaultBase;
 		defaultBase = 10;
 		Num newNum = new Num(num.arr[i]);
 		Num baseNum = new Num(base);
@@ -595,17 +594,15 @@ public class Num implements Comparable<Num> {
 			newNum = add(prodNum,new Num(num.arr[i-1]));
 			i--;
 		}
-		defaultBase = tempBase;
+		defaultBase = originalBase;
+		newNum.isNegative = num.isNegative;
 		return newNum;
 	}
 
 	// Return number equal to "this" number, in base=newBase
 	public Num convertBase(int newBase) {
 		if (newBase != base) {
-			String num = toString();
-			if (this.isNegative)
-				num = "-" + num;
-			return new Num(num, newBase);
+			return new Num(toString(), newBase);
 		} else
 			return this;
 	}
@@ -753,9 +750,12 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Num a = new Num("-0000");
+		Num a = new Num("-1000");
+		(a.convertBase(2)).printList();
 		a.printList();
 		System.out.println(a.toString());
+		System.out.println((a.convertBase(2)).toString());
+		
 		
 
 	}
