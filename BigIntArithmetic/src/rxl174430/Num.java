@@ -25,7 +25,7 @@ public class Num implements Comparable<Num> {
 
 	/**
 	 * Constructs the array from the input string with the default base.
-	 * 
+	 *
 	 * @param s
 	 */
 	private void constructStringNum(String s) {
@@ -193,7 +193,7 @@ public class Num implements Comparable<Num> {
 
 	/**
 	 * Create Num with given base
-	 * 
+	 *
 	 * @param x
 	 * @param base
 	 */
@@ -826,7 +826,7 @@ public class Num implements Comparable<Num> {
 		long carry = 0;
 		long[] newArr = new long[this.len];
 		for (int i = this.len - 1; i >= 0; i--) {
-			long remainder = this.arr[i] + carry * base();
+			long remainder = this.arr[i] + (carry * base());
 			newArr[i] = remainder >> 1;
 			carry = remainder - (newArr[i] * 2);
 		}
