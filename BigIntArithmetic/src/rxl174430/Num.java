@@ -226,9 +226,6 @@ public class Num implements Comparable<Num> {
 		return i;
 	}
 	
-	private Num createCopy() {
-		return new Num(this.arr,this.len,this.isNegative);
-	}
 	public static Num add(Num a, Num b) {
 		if (isNumberZero(a)) {
 			return b;
@@ -480,8 +477,8 @@ public class Num implements Comparable<Num> {
 			sign = minus_one;
 		}
 		
-		Num dividend = a.isNegative ? negateNumber(a) : a.createCopy();
-		Num divisor = b.isNegative ? negateNumber(b) : b.createCopy();
+		Num dividend = a.isNegative ? negateNumber(a) : a;
+		Num divisor = b.isNegative ? negateNumber(b) : b;
 
 		if (divisor.compareTo(zero) == 0) {
 			throw new IllegalArgumentException("Cannot divide by zero");
