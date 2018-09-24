@@ -53,6 +53,7 @@ public class Num implements Comparable<Num> {
 		try {
 			recursive(s, 0);
 		} catch (Exception E) {
+			E.printStackTrace();
 			throw new IllegalArgumentException("Error in handling input");
 		}
 
@@ -64,7 +65,7 @@ public class Num implements Comparable<Num> {
 	}
 
 	private long getBaseLength() {
-		return Long.toString(defaultBase).length();
+		return Long.toString(base()).length();
 	}
 
 	/**
@@ -980,11 +981,8 @@ public class Num implements Comparable<Num> {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String s = "23498273497259479296798767654670546098368036845608460456803458708078056875068750383086086094658095680587935896749853850935902380502680428709568039458029368092487603585709460924386093857083507804568094068309783506978048078056096502349827349725947929679876765467054609836803684560846045680345870807805687506875038308608609465809568058793589674985385093590238050268042870956803945802936809248760358570946092438609385708350780456809406830978350697804807805609650";
-		Num a = new Num(s);
+		Num a = new Num(Long.toString(Long.MAX_VALUE));
 		a.printList();
-		System.out.println(a.toString().equals(s));
-		Num b = new Num(4);
-		Num.squareRoot(b).printList();
+		(a.convertBase(15)).printList();
 	}
 }
