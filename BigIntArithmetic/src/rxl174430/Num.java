@@ -484,26 +484,31 @@ public class Num implements Comparable<Num> {
 
 	
 	public static Num divide(Num a, Num b) {
+		Num zero = new Num(0);
+		Num one = new Num(1);
+		Num minus_one = new Num(-1);
+		
 		Num sign = null;
 		if (isSignEqual(a, b)) {
-			sign = new Num(1);
+			sign = one;
 		} else {
-			sign = new Num(-1);
+			sign = minus_one;
 		}
+		
 		Num dividend = a.isNegative ? negateNumber(a) : a.createCopy();
 		Num divisor = b.isNegative ? negateNumber(b) : b.createCopy();
 
-		if (divisor.compareTo(new Num(0)) == 0) {
+		if (divisor.compareTo(zero) == 0) {
 			throw new IllegalArgumentException("Cannot divide by zero");
 		}
-		if (divisor.compareTo(new Num(1)) == 0) {
+		if (divisor.compareTo(one) == 0) {
 			return product(dividend, sign);
 		}
 		if (divisor.compareTo(dividend) == 0) {
 			return sign;
 		}
 		if (divisor.compareTo(dividend) > 0) {
-			return new Num(0);
+			return zero;
 		}
 		Num low = new Num(0);
 		Num high = dividend;
@@ -512,11 +517,12 @@ public class Num implements Comparable<Num> {
 			Num divisor_quotient_product = product(divisor, quotient);
 			Num remainder = subtract(divisor_quotient_product, dividend);
 			if (remainder.isNegative) {
-				if ((negateNumber(remainder)).compareTo(divisor) < 0) {
+				remainder.isNegative = false;
+				if ((remainder).compareTo(divisor) < 0) {
 					return product(quotient, sign);
 				}
 			} else {
-				if ((remainder).compareTo(new Num(0)) == 0) {
+				if ((remainder).compareTo(zero) == 0) {
 					return product(quotient, sign);
 				}
 			}
@@ -534,44 +540,51 @@ public class Num implements Comparable<Num> {
 	}
 
 	
-	public static Num mod(Num a, Num b) {
-		if (b.compareTo(new Num(0)) == 0) {
+	public static Num mod(Num dividend, Num divisor) {
+		Num zero = new Num(0);
+		Num one = new Num(1);
+		if (divisor.compareTo(zero) == 0) {
 			throw new IllegalArgumentException("Cannot divide by zero");
 		}
-		if (b.compareTo(new Num(1)) == 0) {
-			return new Num(0);
+		if (divisor.compareTo(one) == 0) {
+			return zero;
 		}
-		if (b.compareTo(a) == 0) {
-			return new Num(0);
+		if (divisor.compareTo(dividend) == 0) {
+			return zero;
 		}
-		if (b.compareTo(a) > 0) {
-			return a;
+		if (divisor.compareTo(dividend) > 0) {
+			return dividend;
 		}
 		Num low = new Num(0);
-		Num high = a;
+		Num high = dividend;
 		while (true) {
-			Num mid = add(low, ((subtract(high, low)).by2()));
-			Num operation = subtract(product(b, mid), a);
-			if (operation.isNegative) {
-				if ((negateNumber(operation)).compareTo(b) < 0) {
-					return negateNumber(operation);
+			Num quotient = add(low, ((subtract(high, low)).by2()));
+			Num divisor_quotient_product = product(divisor, quotient);
+			Num remainder = subtract(divisor_quotient_product, dividend);
+			if (remainder.isNegative) {
+				remainder.isNegative = false;
+				if (remainder.compareTo(divisor) < 0) {
+					return remainder;
 				}
 			} else {
-				if ((operation).compareTo(new Num(0)) == 0) {
-					return new Num(0);
+				if ((remainder).compareTo(zero) == 0) {
+					return remainder;
 				}
 			}
 
-			if (product(b, mid).compareTo(a) == -1) {
-				low = mid;
+			if (divisor_quotient_product.compareTo(dividend) == -1) {
+				low = quotient;
 			} else {
-				high = mid;
+				high = quotient;
 			}
 		}
 	}
 
 	
 	public static Num squareRoot(Num a) {
+		if (a.isNegative) {
+			throw new IllegalArgumentException("Square root of negative numbers not supported");
+		}
 		Num low = new Num(0);
 		Num high = a;
 		Num sqrt = new Num(1);
@@ -801,5 +814,7 @@ public class Num implements Comparable<Num> {
 		Num a = new Num("2980232238769");
 		Num b = new Num("5960464477539");
 		System.out.println((Num.divide(b,a)).toString());
+		System.out.println((Num.mod(b,a)).toString());
+		System.out.println((Num.squareRoot(a)).toString());
 	}
 }
