@@ -121,7 +121,7 @@ public class Num implements Comparable<Num> {
 
 						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (int) (subLength + iter + 1)));
 
-						while ((iter < (arrLength - 1)) && (temporaryNumber2 < base)) {
+						while ((iter < (arrLength - 1)) && (temporaryNumber2 < base())) {
 
 							quotientString = quotientString.concat("0");
 							iter++;
@@ -129,7 +129,7 @@ public class Num implements Comparable<Num> {
 						}
 					} else if (baseLength != remLength) {
 						temporaryNumber2 = Long.valueOf(Long.toString(remainder).concat(quotient.substring((int) (subLength), (int) ((subLength + baseLength) - remLength))));
-						if (base <= temporaryNumber2) {
+						if (base() <= temporaryNumber2) {
 							for (int z = 0; z < (baseLength - remLength - 1); z++) {
 								quotientString = quotientString.concat("0");
 							}
@@ -146,7 +146,7 @@ public class Num implements Comparable<Num> {
 
 						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (int) (subLength + 1)));
 						int iter = (int) subLength + 1;
-						while ((iter < quotient.length()) && (temporaryNumber2 < base)) {
+						while ((iter < quotient.length()) && (temporaryNumber2 < base())) {
 							quotientString = quotientString.concat("0");
 							iter++;
 							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (iter)));
@@ -154,14 +154,14 @@ public class Num implements Comparable<Num> {
 					} else if (baseLength != remLength) {
 
 						Long lastPart = Long.parseLong(Long.toString(remainder).concat(quotient.substring((int) subLength, (int) quotientLength)));
-						if (lastPart < base) {
+						if (lastPart < base()) {
 							for (int z = 0; z < (quotient.substring((int) subLength, (int) quotientLength).length() - 1); z++) {
 								quotientString = quotientString.concat("0");
 							}
 
 						} else {
 							temporaryNumber2 = Long.valueOf(Long.toString(remainder).concat(quotient.substring((int) (subLength), (int) ((subLength + baseLength) - remLength))));
-							if (base <= temporaryNumber2) {
+							if (base() <= temporaryNumber2) {
 								for (int z = 0; z < (baseLength - remLength - 1); z++) {
 									quotientString = quotientString.concat("0");
 								}
@@ -177,12 +177,12 @@ public class Num implements Comparable<Num> {
 				}
 			}
 
-			remainder = temporaryNumber % base;
+			remainder = temporaryNumber % base();
 
 			if (!quotientString.isEmpty() && (quotientString.length() < 19) && (Long.parseLong(quotientString) == 0)) {
 				quotientString = "";
 			}
-			quotientString = quotientString.concat(Long.toString(temporaryNumber / base));
+			quotientString = quotientString.concat(Long.toString(temporaryNumber / base()));
 
 		}
 
