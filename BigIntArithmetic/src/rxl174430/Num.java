@@ -9,12 +9,11 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 10;
+	static long defaultBase = 919119199;
 	long base;
 	long[] arr;
 	boolean isNegative;
 	int len;
-	long baseLength = Long.toString(defaultBase).length();
 
 	/**
 	 * @param s
@@ -50,9 +49,9 @@ public class Num implements Comparable<Num> {
 		arr = new long[(int) arrLength];
 		
 		try {
-		recursive(s, 0);}
+			recursive(s, 0);}
 		catch(Exception E) {
-			throw new IllegalArgumentException("Needs a valid String argument");
+			throw new IllegalArgumentException("Error in handling input");
 		}
 		 
 		len = getLengthWithoutLeadingZeros(arr);
@@ -60,6 +59,10 @@ public class Num implements Comparable<Num> {
 		if(len == 1 && arr[0] == 0) {
 			isNegative = false;
 		}
+	}
+	
+	private long getBaseLength() {
+		return Long.toString(defaultBase).length();
 	}
 
 	/**
@@ -88,8 +91,8 @@ public class Num implements Comparable<Num> {
 				return;
 			}
 		}		
-		
-		long arrLength = 18 - baseLength;
+		long baseLength = getBaseLength(); 
+		long arrLength = 19 - baseLength;
 		long temporaryLength =  (quotientLength / arrLength) + ((quotientLength % arrLength) == 0 ? 0 : 1);
 		long temporaryNumber;
 		long temporaryNumber2;
@@ -749,10 +752,11 @@ public class Num implements Comparable<Num> {
 	 */
 	public void printList() {
 		System.out.print(base() + ": ");
+		System.out.print(isNegative ? "- " : "");
 		for (int i = 0; i < len; i++) {
 			System.out.print(arr[i] + " ");
 		}
-		System.out.println(isNegative ? "-" : "");
+		
 	}
 
 	/**
@@ -976,24 +980,13 @@ public class Num implements Comparable<Num> {
 			queue.addLast(stack.pop());
 		}
 		String[] postfixExpression = queue.toArray(new String[queue.size()]);
-		return evaluatePostfix(postfixExpression); //
+		return evaluatePostfix(postfixExpression);
 	}
 
 	public static void main(String[] args) throws Exception {
-		// Num a = new Num("100000000000000000000");
-		// Num b = new Num("20000000");
-		// System.out.println((Num.divide(a, b)).toString());
-		Num a = new Num("8");
-		Num b = new Num("5");
-		System.out.println((Num.divide(b, a)).toString());
-		System.out.println((Num.mod(b, a)).toString());
-		System.out.println((Num.squareRoot(a)).toString());
-		Num c = a.convertBase(2);
-		c.printList();
-		Num d = b.convertBase(2);
-		d.printList();
-		Num sub = Num.subtract(c, d);
-		sub.printList();
-		(Num.divide(a.convertBase(2), b.convertBase(2))).printList();
+		String s = "-111111111111111111111111111111122222222222222222222222233333333333333333334444444444444444555555555555555555566666666666666666666677777777777777777778888888888888888888889999999999999999999999900000000000000000000000999999999999999999888888888888888888887777777777777777776666666666666666666666655555555555555554444444444444444333333333333333333333332222222222222222222222111111111111111111112345678909876543211122334455667788990000998877665544332211111232343454565676787898901357924680";
+		Num a = new Num(s);
+		a.printList();
+		System.out.println(a.toString().equals(s));
 	}
 }
