@@ -9,7 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 50;
+	static long defaultBase = 919119199;
 	long base;
 	long[] arr;
 	boolean isNegative;
@@ -255,7 +255,7 @@ public class Num implements Comparable<Num> {
 	private int getNumberLength(long x) {
 		int i = 0;
 		while (x > 0) {
-			x = x / base;
+			x = x / base();
 			i = i + 1;
 		}
 		return i;
@@ -792,7 +792,7 @@ public class Num implements Comparable<Num> {
 		long originalBase = defaultBase;
 		defaultBase = 10;
 		Num newNum = new Num(num.arr[i]);
-		Num baseNum = new Num(base);
+		Num baseNum = new Num(base());
 		while (i > 0) {
 			Num prodNum = product(newNum, baseNum);
 			newNum = add(prodNum, new Num(num.arr[i - 1]));
@@ -826,12 +826,12 @@ public class Num implements Comparable<Num> {
 		long carry = 0;
 		long[] newArr = new long[this.len];
 		for (int i = this.len - 1; i >= 0; i--) {
-			long remainder = this.arr[i] + (carry * base);
+			long remainder = this.arr[i] + carry * base();
 			newArr[i] = remainder >> 1;
 			carry = remainder - (newArr[i] * 2);
 		}
 
-		return new Num(newArr, getLengthWithoutLeadingZeros(newArr), this.isNegative, this.base);
+		return new Num(newArr, getLengthWithoutLeadingZeros(newArr), this.isNegative, base());
 	}
 
 	/**
