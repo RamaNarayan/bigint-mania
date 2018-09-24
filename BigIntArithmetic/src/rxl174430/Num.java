@@ -237,7 +237,7 @@ public class Num implements Comparable<Num> {
 			return a;
 		}
 		boolean isNegative;
-		if (a.isNegative && b.isNegative || !a.isNegative && !b.isNegative) {
+		if (isSignEqual(a, b)) {
 			if (a.isNegative && b.isNegative) {
 				isNegative = true;
 			} else {
@@ -296,6 +296,29 @@ public class Num implements Comparable<Num> {
 	public static Num negateNumber(Num a) {
 		return new Num(a.arr, a.len, !a.isNegative);
 	}
+	
+	private static int unsignedCompare(Num a, Num b) {
+		int sizeOfNumA = a.len;
+		int sizeOfNumB = b.len;
+		if (sizeOfNumA > sizeOfNumB) {
+			return 1;
+			
+		} else if (sizeOfNumA < sizeOfNumB) {
+			return -1;
+			
+		} else {
+			int x = sizeOfNumA - 1;
+			while (x >= 0) {
+				if (a.arr[x] < b.arr[x]) {
+					return -1;
+				} else if (a.arr[x] > b.arr[x]) {
+					return 1;
+				}
+				x--;
+			}
+			return 0;
+		}
+	}
 
 	public static Num subtract(Num a, Num b) {
 		if (isNumberZero(a)) {
@@ -309,65 +332,28 @@ public class Num implements Comparable<Num> {
 			return new Num(0);
 		}
 
-		if (isSignEqual(a, b)) {
-			boolean isNegative;
+		if (isSignEqual(a, b)) {			
+			boolean isNegative = a.compareTo(b) == -1 ? true : false;
 			int sizeOfNumA = a.len;
 			int sizeOfNumB = b.len;
-			int sizeOfDiff;
+			int sizeOfDifference,firstNumberLength,secondNumberLength;
 			long[] firstNumber;
 			long[] secondNumber;
-			int firstNumberLength, secondNumberLength;
-			if (sizeOfNumA > sizeOfNumB) {
-				sizeOfDiff = sizeOfNumA;
-				firstNumber = a.arr;
-				secondNumber = b.arr;
-				firstNumberLength = sizeOfNumA;
-				secondNumberLength = sizeOfNumB;
-				isNegative = a.isNegative;
-			} else if (sizeOfNumA < sizeOfNumB) {
-				sizeOfDiff = sizeOfNumB;
+			if(unsignedCompare(a,b)==-1) {
+				sizeOfDifference = sizeOfNumB;
 				firstNumber = b.arr;
 				secondNumber = a.arr;
 				firstNumberLength = sizeOfNumB;
 				secondNumberLength = sizeOfNumA;
-				isNegative = b.isNegative;
-			} else {
-				int x = sizeOfNumA - 1;
-				int isEqual = 0;
-				while (x >= 0) {
-					if (a.arr[x] < b.arr[x]) {
-						isEqual = -1;
-						break;
-					} else if (a.arr[x] > b.arr[x]) {
-						isEqual = 1;
-						break;
-					}
-					x--;
-				}
-				if (isEqual == -1) {
-					sizeOfDiff = sizeOfNumB;
-					firstNumber = b.arr;
-					secondNumber = a.arr;
-					firstNumberLength = sizeOfNumB;
-					secondNumberLength = sizeOfNumA;
-					isNegative = b.isNegative;
-				} else {
-					sizeOfDiff = sizeOfNumA;
-					firstNumber = a.arr;
-					secondNumber = b.arr;
-					firstNumberLength = sizeOfNumA;
-					secondNumberLength = sizeOfNumB;
-					isNegative = a.isNegative;
-				}
-
 			}
-			int compare = a.compareTo(b);
-			if (compare == -1) {
-				isNegative = true;
-			} else {
-				isNegative = false;
+			else {				
+				sizeOfDifference = sizeOfNumA;
+				firstNumber = a.arr;
+				secondNumber = b.arr;
+				firstNumberLength = sizeOfNumA;
+				secondNumberLength = sizeOfNumB;
 			}
-			long[] difference = new long[sizeOfDiff];
+			long[] difference = new long[sizeOfDifference];
 			int i = 0;
 			int j = 0;
 			int k = 0;
@@ -403,7 +389,7 @@ public class Num implements Comparable<Num> {
 
 	}
 
-	public static int getLengthWithoutLeadingZeros(long[] a) {
+	private static int getLengthWithoutLeadingZeros(long[] a) {
 		int len = a.length;
 		int i = len - 1;
 		int count = 0;
@@ -418,13 +404,13 @@ public class Num implements Comparable<Num> {
 		if (isNumberZero(a) || isNumberZero(b)) {
 			return new Num(0);
 		}
-		boolean isNegative;
-		int sizeOfLargerNum = 0;
-		int sizeOfSmallerNum = 0;
-		int compare = a.compareTo(b);
+		boolean isNegative = isSignEqual(a, b) ? false : true;
+		int sizeOfLargerNum;
+		int sizeOfSmallerNum;
+		int unsignedCompare = unsignedCompare(a,b);
 		long[] firstNumber;
 		long[] secondNumber;
-		if (compare == -1) {
+		if (unsignedCompare == -1) {
 			firstNumber = b.arr;
 			sizeOfLargerNum = b.len;
 			secondNumber = a.arr;
@@ -440,14 +426,13 @@ public class Num implements Comparable<Num> {
 		int sizeOfProduct = sizeOfLargerNum + sizeOfSmallerNum;
 		long[] product = new long[sizeOfProduct];
 		long carry = 0;
-		int i;
-		int j;
 		int k = 0;
-		for (i = 0; i < sizeOfLargerNum; i++) {
+		long prod;
+		for (int i = 0; i < sizeOfLargerNum; i++) {		
 			carry = 0;
-			for (j = 0; j < sizeOfSmallerNum; j++) {
+			for (int j = 0; j < sizeOfSmallerNum; j++) {
 				k = i + j;
-				long prod = product[k] + (firstNumber[i] * secondNumber[j]) + carry;
+				prod = product[k] + (firstNumber[i] * secondNumber[j]) + carry;
 				product[k] = prod % defaultBase;
 				carry = prod / defaultBase;
 			}
