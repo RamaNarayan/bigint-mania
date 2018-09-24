@@ -1,3 +1,8 @@
+/**
+ * @author: Shubham Raosaheb Kharde, Rohit Seetepalli, Arunachalam Saravanan, Rama Narayan Lakshmanan
+ * Long Project LP1: Integer arithmetic with arbitrarily large numbers
+ */
+
 package rxl174430;
 
 import java.util.ArrayDeque;
@@ -557,8 +562,8 @@ public class Num implements Comparable<Num> {
 		if (isNumberZero(n)) {
 			return new Num(1, a.base());
 		} else {
-			Num p = power(Num.product(a, a), n.by2());
-			return mod(n, new Num(2, a.base())).compareTo(new Num(1)) == 0 ? Num.product(p, a) : p;
+			Num p = power(product(a, a), n.by2());
+			return mod(n, new Num(2, a.base())).compareTo(new Num(1)) == 0 ? product(p, a) : p;
 		}
 	}
 
