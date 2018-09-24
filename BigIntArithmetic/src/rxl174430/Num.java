@@ -9,6 +9,7 @@ public class Num implements Comparable<Num> {
 	long[] arr;
 	boolean isNegative;
 	int len;
+	long baseLength = Long.toString(defaultBase).length();
 
 	/**
 	 * @param s
@@ -18,21 +19,42 @@ public class Num implements Comparable<Num> {
 		constructStringNum(s);
 	}
 
+	/**
+	 * Constructs the array from the input string with the default base.
+	 * @param s
+	 */
 	private void constructStringNum(String s) {
-		// Handle for new Num("-00000000000000000") len is 0 and arrayLength considers
-		// "-" and leading zeroes in its calculation
-		// Handle Small bases
-		long arrLength = (long) Math.ceil((s.length() + 1) * (Math.log(10) / Math.log(base)) + 1);
-		// System.out.println(arrLength);
+		if(s.isEmpty()) {
+			throw new IllegalArgumentException("Needs a valid String argument");
+		}
+		
+		if (s.charAt(0) == '-' || s.charAt(0) == '+') {
+			if (s.charAt(0) == '-') 
+				isNegative = true;	
+			else if (s.charAt(0) == '+') 
+				isNegative = false;
+			s = s.substring(1, s.length());
+			if(s.isEmpty()) {
+				throw new IllegalArgumentException("Needs a valid String argument");
+			}
+			
+		}	
+		
+		long arrLength = (long) Math.ceil((s.length()+1) * (Math.log(10) / Math.log(base))+1);
+		
 		arr = new long[(int) arrLength];
-		if (s.charAt(0) == '-') {
-			isNegative = true;
-			recursive(s.substring(1, s.length()), 0);
-		} else if (s.charAt(0) == '+') {
+		
+		try {
+		recursive(s, 0);}
+		catch(Exception E) {
+			throw new IllegalArgumentException("Needs a valid String argument");
+		}
+		 
+		len = getLengthWithoutLeadingZeros(arr);
+		
+		if(len == 1 && arr[0] == 0) {
 			isNegative = false;
-			recursive(s.substring(1, s.length()), 0);
-		} else
-			recursive(s, 0);
+		}
 	}
 
 	/**
@@ -48,66 +70,68 @@ public class Num implements Comparable<Num> {
 		this.base = base;
 	}
 
+	/**
+	 * @param quotient
+	 * @param index
+	 */
 	private void recursive(String quotient, int index) {
-		if (quotient.length() < 19) {
+		long quotientLength = quotient.length();
+		
+		if (quotientLength < 19) {
 			if (Long.parseLong(quotient) == 0) {
 				len = index;
 				return;
 			}
-		}
-		// long[] arrTemp;
-		long arrLength = 18 - Long.toString(base).length();
-		// arrTemp = new long[(int) ((quotient.length() / arrLength) +
-		// ((quotient.length() % arrLength) == 0 ? 0 : 1))];
-		long temporaryLength = (long) (quotient.length() / arrLength) + ((quotient.length() % arrLength) == 0 ? 0 : 1);
+		}		
+		
+		long arrLength = 18 - baseLength;
+		long temporaryLength =  (quotientLength / arrLength) + ((quotientLength % arrLength) == 0 ? 0 : 1);
 		long temporaryNumber;
 		long temporaryNumber2;
 		String temp;
 		long remainder = 0;
 		String quotientString = "";
-		// System.out.println(arrLength + " " + arrTemp.length);
+		long remLength;
+		long subLength;
+		
+		
 		for (long i = 0; i < temporaryLength; i = i + 1) {
-			long subLength = i * arrLength;
+			
+			subLength = i * arrLength;
+			
+			remLength = Long.toString(remainder).length();
 			temp = Long.toString(remainder).concat(quotient.substring((int) (subLength),
-					(int) ((subLength + arrLength) < quotient.length() ? (subLength + arrLength) : quotient.length())));
+					(int) ((subLength + arrLength) < quotientLength ? (subLength + arrLength) : quotientLength)));
 			temporaryNumber = Long.valueOf(temp);
-			// Remainder handling
+			
+			
+			// Quotient zero handling
 			if (i != 0) {
 				if (i != temporaryLength - 1) {
 					if (remainder == 0) {
+						
 						int iter = 0;
-						temporaryNumber2 = Long
-								.valueOf(quotient.substring((int) (subLength), (int) (subLength + iter + 1)));
-
-						while (iter < arrLength - 1 && temporaryNumber2 < base) {
-
+						
+						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
+																		(int) (subLength + iter + 1)));
+						
+						while(iter < arrLength-1 && temporaryNumber2 < base) {
+							
 							quotientString = quotientString.concat("0");
 							iter++;
-							temporaryNumber2 = Long
-									.valueOf(quotient.substring((int) (subLength), (int) (subLength + iter + 1)));
+							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
+																			(int) (subLength + iter + 1)));
 						}
-						// if (base <= temporaryNumber2) {
-						// for (int z = 0; z < Long.toString(base).length() - 1; z++) {
-						// quotientString = quotientString.concat("0");
-						// }
-						// } else {
-						// for (int z = 0; z < Long.toString(base).length(); z++) {
-						// quotientString = quotientString.concat("0");
-						// }
-						//
-						// }
-					} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
-
+					} else if (baseLength != remLength) {
 						temporaryNumber2 = Long.valueOf(Long.toString(remainder).concat(quotient.substring(
-								(int) (subLength),
-								(int) (subLength + Long.toString(base).length() - Long.toString(remainder).length()))));
+																	(int) (subLength),
+																	(int) (subLength + baseLength - remLength))));
 						if (base <= temporaryNumber2) {
-							for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length()
-									- 1; z++) {
+							for (int z = 0; z < baseLength - remLength - 1; z++) {
 								quotientString = quotientString.concat("0");
 							}
 						} else {
-							for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length(); z++) {
+							for (int z = 0; z < baseLength - remLength; z++) {
 								quotientString = quotientString.concat("0");
 							}
 
@@ -118,52 +142,32 @@ public class Num implements Comparable<Num> {
 					if (remainder == 0) {
 
 						temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (int) (subLength + 1)));
-						int iter = (int) subLength + 1;
-						while (iter < quotient.length() && temporaryNumber2 < base) {
+						int iter = (int)subLength + 1;
+						while(iter < quotient.length() && temporaryNumber2 < base) {
 							quotientString = quotientString.concat("0");
 							iter++;
-							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength), (int) (iter)));
+							temporaryNumber2 = Long.valueOf(quotient.substring((int) (subLength),
+																			(int) (iter)));
 						}
-						// if (temporaryNumber2 < base) {
-						// for (int z = 0; z < Long.toString(temporaryNumber2).length(); z++) {
-						// quotientString = quotientString.concat("0");
-						// }
-						// } else {
-						// long var1 = Long.parseLong(
-						// Long.toString(temporaryNumber2).substring(0, Long.toString(base).length()));
-						// if (var1 < base) {
-						// for (int z = 0; z < Long.toString(var1).length(); z++) {
-						// quotientString = quotientString.concat("0");
-						// }
-						// } else {
-						// for (int z = 0; z < Long.toString(var1).length() - 1; z++) {
-						// quotientString = quotientString.concat("0");
-						// }
-						// }
-						// }
-					} else if (Long.toString(base).length() != Long.toString(remainder).length()) {
-
+					} else if (baseLength != remLength) {
+						
 						Long lastPart = Long.parseLong(Long.toString(remainder)
-								.concat(quotient.substring((int) subLength, quotient.length())));
+								.concat(quotient.substring((int) subLength, (int)quotientLength)));
 						if (lastPart < base) {
-							for (int z = 0; z < quotient.substring((int) subLength, quotient.length()).length()
-									- 1; z++) {
-								// System.out.println("hello"+z);
+							for (int z = 0; z < quotient.substring((int) subLength, (int) quotientLength).length()-1; z++) {
 								quotientString = quotientString.concat("0");
 							}
-
-						} else {// copy need to test
+							
+						} else {
 							temporaryNumber2 = Long.valueOf(Long.toString(remainder)
 									.concat(quotient.substring((int) (subLength), (int) (subLength
-											+ Long.toString(base).length() - Long.toString(remainder).length()))));
+											+ baseLength - remLength))));
 							if (base <= temporaryNumber2) {
-								for (int z = 0; z < Long.toString(base).length() - Long.toString(remainder).length()
-										- 1; z++) {
+								for (int z = 0; z < baseLength - remLength	- 1; z++) {
 									quotientString = quotientString.concat("0");
 								}
 							} else {
-								for (int z = 0; z < Long.toString(base).length()
-										- Long.toString(remainder).length(); z++) {
+								for (int z = 0; z < baseLength	- remLength; z++) {
 									quotientString = quotientString.concat("0");
 								}
 
@@ -173,29 +177,20 @@ public class Num implements Comparable<Num> {
 
 				}
 			}
-			// System.out.print("temporaryNumber" + Long.toString(temporaryNumber));
-			/*
-			 * if (remainder == 0 && i != 0) { for (int z = 0; z <
-			 * Long.toString(temporaryNumber).length() - 1; z++) { quotientString =
-			 * quotientString.concat("0"); } }
-			 */
+			
 			remainder = temporaryNumber % base;
-			// System.out.print(" remainder- " + Long.toString(remainder));
-			if (!quotientString.isEmpty() && quotientString.equals("0")) {
+
+			if(!quotientString.isEmpty() && quotientString.equals("0")) {
 				quotientString = "";
 			}
 			quotientString = quotientString.concat(Long.toString(temporaryNumber / base));
-			// System.out.println(" quotient" + quotientString);
 
 		}
-		// System.out.println("quotient string-" + quotientString);
-		// System.out.println("Remainder string-" + remainder);
-		// System.out.println(index);
+
 		arr[index] = remainder;
 		recursive(quotientString, index + 1);
 
 	}
-
 	/**
 	 * Create Num with given base
 	 * @param x
