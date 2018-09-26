@@ -763,6 +763,7 @@ public class Num implements Comparable<Num> {
 	@Override
 	public String toString() {
 		Num n = convertNumToBase10(this);
+		System.out.println("Converted");
 		StringBuilder sb = new StringBuilder();
 		if (n.isNegative && !isNumberZero(n)) {
 			sb.append('-');
