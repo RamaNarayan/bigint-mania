@@ -238,14 +238,6 @@ public class Num implements Comparable<Num> {
 		constructLongNum(x, base);
 	}
 
-	/**
-	 * @param x
-	 * @param base
-	 */
-	private Num(String x, long base) {
-		this.base = base;
-		constructStringNum(x);
-	}
 
 	/**
 	 * Number of digits in a number
@@ -754,6 +746,7 @@ public class Num implements Comparable<Num> {
 		for (int i = 0; i < len; i++) {
 			System.out.print(arr[i] + " ");
 		}
+		System.out.println();
 
 	}
 
@@ -762,7 +755,7 @@ public class Num implements Comparable<Num> {
 	 */
 	@Override
 	public String toString() {
-		Num n = convertNumToBase10(this);
+		Num n = convertBase(10);
 		System.out.println("Converted");
 		StringBuilder sb = new StringBuilder();
 		if (n.isNegative && !isNumberZero(n)) {
@@ -783,27 +776,6 @@ public class Num implements Comparable<Num> {
 		return base;
 	}
 
-	/**
-	 * Convert the number to Base 10
-	 *
-	 * @param num
-	 * @return
-	 */
-	private Num convertNumToBase10(Num num) {
-		int i = num.len - 1;
-		long originalBase = defaultBase;
-		defaultBase = 10;
-		Num newNum = new Num(num.arr[i]);
-		Num baseNum = new Num(base());
-		while (i > 0) {
-			Num prodNum = product(newNum, baseNum);
-			newNum = add(prodNum, new Num(num.arr[i - 1]));
-			i--;
-		}
-		defaultBase = originalBase;
-		newNum.isNegative = num.isNegative;
-		return newNum;
-	}
 
 	/**
 	 * Convert the number from default base to the user input base
@@ -813,7 +785,16 @@ public class Num implements Comparable<Num> {
 	 */
 	public Num convertBase(int newBase) {
 		if (newBase != base) {
-			return new Num(toString(), newBase);
+			int i = this.len - 1;
+			Num newNum = new Num(this.arr[i],newBase);
+			Num baseNum = new Num(base(),newBase);
+			while (i > 0) {
+				Num prodNum = product(newNum, baseNum);
+				newNum = add(prodNum, new Num(this.arr[i - 1],newBase));
+				i--;
+			}
+			newNum.isNegative = this.isNegative;
+			return newNum;
 		} else {
 			return this;
 		}
@@ -983,7 +964,9 @@ public class Num implements Comparable<Num> {
 
 	public static void main(String[] args) throws Exception {
 		Num a = new Num(Long.toString(Long.MAX_VALUE));
+		System.out.println(Long.MAX_VALUE);
 		a.printList();
-		(a.convertBase(15)).printList();
-	}
+		System.out.println(a.toString());
+		a.convertBase(100).printList();
+;	}
 }
