@@ -9,7 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class Num implements Comparable<Num> {
-	static long defaultBase = 919119199;
+	static long defaultBase = 3037000499L;
 	long base;
 	long[] arr;
 	boolean isNegative;
@@ -755,14 +755,48 @@ public class Num implements Comparable<Num> {
 	 */
 	@Override
 	public String toString() {
-		Num n = convertBase(10);
-		System.out.println("Converted");
+		Num n = convertBase(1000000000);
+		
+		String one_zero = "0";
+		String two_zero = "00";
+		String three_zero = "000";
+		String four_zero = "0000";
+		String five_zero = "00000";
+		String six_zero = "000000";
+		String seven_zero = "0000000";
+		String eight_zero = "00000000";
+		
 		StringBuilder sb = new StringBuilder();
 		if (n.isNegative && !isNumberZero(n)) {
 			sb.append('-');
 		}
 		for (int i = n.len - 1; i >= 0; i--) {
-			sb.append(Long.toString(n.arr[i]));
+			String temp = Long.toString(n.arr[i]);
+			int tempLength = temp.length();
+			int zeroesToAppend = 9 - tempLength;
+			if(i != n.len - 1 && zeroesToAppend > 0) {
+				switch(zeroesToAppend) {
+					case 1 : sb.append(one_zero);
+							 break;
+					case 2 : sb.append(two_zero);
+					 		 break;
+					case 3 : sb.append(three_zero);
+					 		 break;
+					case 4 : sb.append(four_zero);
+					 		 break;
+					case 5 : sb.append(five_zero);
+					 		 break;
+					case 6 : sb.append(six_zero);
+					 		 break;
+					case 7 : sb.append(seven_zero);
+					 		 break;
+					case 8 : sb.append(eight_zero);
+			 		 		 break;
+					default: break;
+				}
+					
+			}
+			sb.append(temp);
 		}
 		return sb.toString();
 	}
