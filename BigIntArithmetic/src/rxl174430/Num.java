@@ -995,12 +995,4 @@ public class Num implements Comparable<Num> {
 		String[] postfixExpression = queue.toArray(new String[queue.size()]);
 		return evaluatePostfix(postfixExpression);
 	}
-
-	public static void main(String[] args) throws Exception {
-		Num a = new Num(Long.toString(Long.MAX_VALUE));
-		System.out.println(Long.MAX_VALUE);
-		a.printList();
-		System.out.println(a.toString());
-		a.convertBase(100).printList();
-;	}
 }
